@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { App } from './app';
 
 const rootElement =
   document.querySelector('#root') ??
@@ -12,6 +13,6 @@ const rootElement =
 
 createRoot(rootElement).render(
   <StrictMode>
-    <h1>Hello World!!</h1>
+    <App></App>
   </StrictMode>
 );

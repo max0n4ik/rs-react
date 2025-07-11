@@ -1,3 +1,3 @@
 export interface ApiResponse {
-  name: string;
+  name?: string;
 }

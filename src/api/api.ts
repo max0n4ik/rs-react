@@ -9,8 +9,7 @@ export async function fetchPokemon(term: string): Promise<SimplifiedPokemon[]> {
   const trimmed = term.trim().toLowerCase();
 
   if (trimmed === '') {
-    // Загружаем первые 20 покемонов
-    const res = await fetch(`${API.API_URL}?limit=20`);
+    const res = await fetch(`${API.API_URL}?limit=9`);
     if (!res.ok) throw new Error(`Error: ${res.status}`);
     const data: PokemonAPIResponse = await res.json();
 
@@ -20,7 +19,6 @@ export async function fetchPokemon(term: string): Promise<SimplifiedPokemon[]> {
 
     return detailed;
   } else {
-    // Поиск по имени
     const res = await fetch(`${API.API_URL}/${trimmed}`);
     if (!res.ok) throw new Error(`Pokemon "${trimmed}" not found`);
 
@@ -28,6 +26,7 @@ export async function fetchPokemon(term: string): Promise<SimplifiedPokemon[]> {
     return [
       {
         name: data.name,
+        image: data.sprites.front_default,
         description: `Type: ${data.types.map((t) => t.type.name).join(', ')}, Height: ${data.height}, Weight: ${data.weight}`,
       },
     ];
@@ -41,6 +40,7 @@ async function fetchPokemonDetails(url: string): Promise<SimplifiedPokemon> {
 
   return {
     name: data.name,
+    image: data.sprites.front_default,
     description: `Type: ${data.types.map((t) => t.type.name).join(', ')}, Height: ${data.height}, Weight: ${data.weight}`,
   };
 }

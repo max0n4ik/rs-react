@@ -7,6 +7,7 @@ export type PokemonAPIResponse = {
 
 export type PokemonDetails = {
   name: string;
+  sprites: { front_default: string };
   weight: number;
   height: number;
   types: { type: { name: string } }[];
@@ -14,5 +15,6 @@ export type PokemonDetails = {
 
 export type SimplifiedPokemon = {
   name: string;
+  image?: string;
   description: string;
 };

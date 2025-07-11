@@ -18,7 +18,7 @@ export class ErrorBoundary extends Component<
     this.state = { hasError: false };
   }
 
-  static setError(): ErrorBoundaryState {
+  static getDerivedStateFromError(): ErrorBoundaryState {
     return { hasError: true };
   }
 
@@ -30,10 +30,8 @@ export class ErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center p-4 text-center text-red-600">
-          <h1 className="text-2xl font-bold mb-2">Что-то пошло не так.</h1>
-          <p className="mb-4">
-            Пожалуйста, обновите страницу или попробуйте позже.
-          </p>
+          <h1 className="text-2xl font-bold mb-2">Something went wrong.</h1>
+          <p className="mb-4">Please refresh the page or try again later.</p>
         </div>
       );
     }

@@ -24,12 +24,12 @@ export default class Search extends Component<Props, State> {
 
   handleSearchClick = () => {
     const trimmed = this.state.value.trim();
-    localStorage.setItem('searchTerm', trimmed);
+    localStorage.setItem('searchState', trimmed);
     this.props.onSearch(trimmed);
   };
   render() {
     return (
-      <div className="flex justify-center mt-6 flex-col w-screen">
+      <div className="flex justify-center mt-6 flex-col w-screen mb-3">
         <h1 className="text-center text-3xl mb-5">Pokewiki</h1>
         <div className="flex relative rounded-md w-full px-4 max-w-xl mx-auto">
           <input

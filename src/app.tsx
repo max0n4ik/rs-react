@@ -36,7 +36,7 @@ export class App extends Component<object, State> {
       <ErrorBoundary>
         <Search onSearch={this.handleSearch}></Search>
         {loading && (
-          <div role="status">
+          <div role="status" className="flex items-center justify-center">
             <svg
               aria-hidden="true"
               className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -60,8 +60,12 @@ export class App extends Component<object, State> {
         {!loading && error && (
           <div className="text-red-600 mb-4 text-center">{error}</div>
         )}
-        {/* {console.log(data)} */}
         {!loading && !error && <CardList items={data} />}
+        <div className="flex justify-end mr-5">
+          <button className="border-2 p-1 rounded-md border-gray-300">
+            Get Error
+          </button>
+        </div>
       </ErrorBoundary>
     );
   }

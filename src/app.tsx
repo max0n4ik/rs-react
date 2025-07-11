@@ -2,14 +2,11 @@ import { Component } from 'react';
 import { fetchPokemon } from './api/api';
 import { ErrorBoundary } from './error-boundary';
 import Search from './search';
-import type { ApiResponse } from './api/type';
+import type { SimplifiedPokemon } from './api/type';
 import CardList from './card-list';
 
-const pokemon = await fetchPokemon(`1`);
-console.log(pokemon);
-
 type State = {
-  data: ApiResponse;
+  data: SimplifiedPokemon[];
   loading: boolean;
   error: string | null;
 };
@@ -18,12 +15,15 @@ export class App extends Component<object, State> {
   constructor(props: object) {
     super(props);
     this.state = {
-      data: {},
+      data: [],
       loading: false,
       error: null,
     };
   }
-
+  componentDidMount(): void {
+    const term = localStorage.getItem('searchTerm') || '';
+    this.handleSearch(term);
+  }
   handleSearch = (term: string) => {
     this.setState({ loading: true, error: null });
     fetchPokemon(term)
@@ -60,7 +60,7 @@ export class App extends Component<object, State> {
         {!loading && error && (
           <div className="text-red-600 mb-4 text-center">{error}</div>
         )}
-
+        {/* {console.log(data)} */}
         {!loading && !error && <CardList items={data} />}
       </ErrorBoundary>
     );

@@ -6,3 +6,7 @@
 .render-pixel {
   image-rendering: pixelated;
 }
+.grid-cols {
+  grid-template-columns: repeat(3, 304px);
+  aspect-ratio: auto;
+}

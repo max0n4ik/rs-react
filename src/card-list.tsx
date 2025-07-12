@@ -15,7 +15,7 @@ export default class CardList extends Component<Props> {
     }
 
     return (
-      <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols gap-4 mt-4 justify-center  ">
         {items.map((item, index) => (
           <Card
             key={index}

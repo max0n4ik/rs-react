@@ -11,8 +11,8 @@ export class Card extends Component<Props> {
     const { name, description, image } = this.props;
 
     return (
-      <div className="border p-4 rounded shadow bg-white hover:shadow-md transition">
-        <img src={image} alt="" />
+      <div className="border p-4 rounded shadow bg-white hover:shadow-md transition flex flex-col">
+        <img src={image} alt="" className="render-pixel" />
         <h2 className="text-lg font-semibold">{name}</h2>
         <p className="text-sm text-gray-600">{description}</p>
       </div>

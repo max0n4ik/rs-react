@@ -24,16 +24,22 @@ export class App extends Component<object, State> {
     const term = localStorage.getItem('searchTerm') || '';
     this.handleSearch(term);
   }
+  handleError = () => {
+    this.setState({ error: 'You get Error' });
+    throw new Error('You get Error');
+  };
   handleSearch = (term: string) => {
     this.setState({ loading: true, error: null });
     fetchPokemon(term)
       .then((data) => this.setState({ data, loading: false }))
-      .catch((err) => this.setState({ error: err.message, loading: false }));
+      .catch((error) => {
+        this.setState({ loading: false, error: error });
+      });
   };
   render() {
     const { data, loading, error } = this.state;
     return (
-      <ErrorBoundary>
+      <>
         <Search onSearch={this.handleSearch}></Search>
         {loading && (
           <div role="status" className="flex items-center justify-center">
@@ -56,17 +62,24 @@ export class App extends Component<object, State> {
             <span className="sr-only">Loading...</span>
           </div>
         )}
+        <ErrorBoundary>
+          {!loading && error && (
+            <div className="flex flex-col items-center justify-center p-4 text-center text-red-600">
+              <h2 className="text-xl font-bold mb-2">Error: {error}</h2>
+            </div>
+          )}
 
-        {!loading && error && (
-          <div className="text-red-600 mb-4 text-center">{error}</div>
-        )}
-        {!loading && !error && <CardList items={data} />}
-        <div className="flex justify-end mr-5">
-          <button className="border-2 p-1 rounded-md border-gray-300">
-            Get Error
-          </button>
-        </div>
-      </ErrorBoundary>
+          {!loading && !error && <CardList items={data} />}
+          <div className="flex justify-end mr-5">
+            <button
+              onClick={this.handleError}
+              className="inline-flex items-center gap-2 bg-violet-700 text-white text-lg font-semibold py-3 px-6 rounded-md"
+            >
+              Get Error
+            </button>
+          </div>
+        </ErrorBoundary>
+      </>
     );
   }
 }

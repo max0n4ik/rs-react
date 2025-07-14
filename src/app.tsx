@@ -21,7 +21,7 @@ export class App extends Component<object, State> {
     };
   }
   componentDidMount(): void {
-    const term = localStorage.getItem('searchTerm') || '';
+    const term = localStorage.getItem('searchState') || '';
     this.handleSearch(term);
   }
   handleError = () => {

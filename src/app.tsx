@@ -26,7 +26,9 @@ export class App extends Component<object, State> {
   }
   handleError = () => {
     this.setState({ error: 'You get Error' });
-    throw new Error('You get Error');
+    setTimeout(() => {
+      throw new Error('You get Error');
+    }, 100);
   };
   handleSearch = (term: string) => {
     this.setState({ loading: true, error: null });

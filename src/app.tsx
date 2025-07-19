@@ -1,9 +1,10 @@
 import { Component } from 'react';
 import { fetchPokemon } from './api/api';
-import { ErrorBoundary } from './error-boundary';
+// import { ErrorBoundary } from './error-boundary';
 import Search from './search';
 import type { SimplifiedPokemon } from './api/type';
 import CardList from './card-list';
+import ErrorButton from './error-button';
 
 type State = {
   data: SimplifiedPokemon[];
@@ -24,12 +25,7 @@ export class App extends Component<object, State> {
     const term = localStorage.getItem('searchState') || '';
     this.handleSearch(term);
   }
-  handleError = () => {
-    this.setState({ error: 'You get Error' });
-    setTimeout(() => {
-      throw new Error('You get Error');
-    }, 100);
-  };
+
   handleSearch = (term: string) => {
     this.setState({ loading: true, error: null });
     fetchPokemon(term)
@@ -64,23 +60,15 @@ export class App extends Component<object, State> {
             <span className="sr-only">Loading...</span>
           </div>
         )}
-        <ErrorBoundary>
-          {!loading && error && (
-            <div className="flex flex-col items-center justify-center p-4 text-center text-red-600">
-              <h2 className="text-xl font-bold mb-2">Error: {error}</h2>
-            </div>
-          )}
 
-          {!loading && !error && <CardList items={data} />}
-          <div className="flex justify-end mr-5">
-            <button
-              onClick={this.handleError}
-              className="inline-flex items-center gap-2 bg-violet-700 text-white text-lg font-semibold py-3 px-6 rounded-md"
-            >
-              Get Error
-            </button>
+        {!loading && error && (
+          <div className="flex flex-col items-center justify-center p-4 text-center text-red-600">
+            <h2 className="text-xl font-bold mb-2">Error: {error}</h2>
           </div>
-        </ErrorBoundary>
+        )}
+
+        {!loading && !error && <CardList items={data} />}
+        <ErrorButton></ErrorButton>
       </>
     );
   }

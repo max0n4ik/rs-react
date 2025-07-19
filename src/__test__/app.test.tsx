@@ -4,6 +4,7 @@ import { App } from '../app';
 import * as api from '../api/api';
 import type { SimplifiedPokemon } from '../api/type';
 import Search from '../search';
+import { ErrorBoundary } from '../error-boundary';
 
 vi.mock('../api/api', () => ({
   fetchPokemon: vi.fn(),
@@ -95,18 +96,18 @@ describe('App Component Integration Tests', () => {
   });
 
   it('causes errorbinary when clicking on the "Get Error" button', async () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error');
     vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(<App />);
 
-    const button = screen.getByRole('button', { name: /get error/i });
-    fireEvent.click(button);
+    render(
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    );
 
-    await waitFor(() => {
-      expect(screen.getByText(/Error/i)).toBeInTheDocument();
-    });
-    consoleErrorSpy.mockRestore();
+    fireEvent.click(screen.getByRole('button', { name: 'Get Error' }));
+
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 });

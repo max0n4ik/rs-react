@@ -85,7 +85,9 @@ describe('App Component Integration Tests', () => {
   });
 
   it('displays an error message in case of API failure', async () => {
-    vi.spyOn(api, 'fetchPokemon').mockRejectedValueOnce('Server unavailable');
+    vi.spyOn(api, 'fetchPokemon').mockRejectedValueOnce(
+      new Error('Server unavailable')
+    );
 
     render(<App />);
     await waitFor(() => {

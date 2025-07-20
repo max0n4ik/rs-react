@@ -9,7 +9,7 @@ import ErrorButton from './error-button';
 type State = {
   data: SimplifiedPokemon[];
   loading: boolean;
-  error: string | null;
+  error: Error | null;
 };
 
 export class App extends Component<object, State> {
@@ -39,6 +39,7 @@ export class App extends Component<object, State> {
     return (
       <>
         <Search onSearch={this.handleSearch}></Search>
+
         {loading && (
           <div role="status" className="flex items-center justify-center">
             <svg
@@ -63,7 +64,7 @@ export class App extends Component<object, State> {
 
         {!loading && error && (
           <div className="flex flex-col items-center justify-center p-4 text-center text-red-600">
-            <h2 className="text-xl font-bold mb-2">Error: {error}</h2>
+            <h2 className="text-xl font-bold mb-2">Error: {error.message}</h2>
           </div>
         )}
 

@@ -1,4 +1,4 @@
-import { Component, type ChangeEvent } from 'react';
+import { Component, type ChangeEvent, type KeyboardEvent } from 'react';
 
 type Props = {
   onSearch: (term: string) => void;
@@ -22,6 +22,12 @@ export default class Search extends Component<Props, State> {
     this.setState({ value: e.target.value });
   };
 
+  handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      this.handleSearchClick();
+    }
+  };
+
   handleSearchClick = () => {
     const trimmed = this.state.value.trim();
     localStorage.setItem('searchState', trimmed);
@@ -35,6 +41,7 @@ export default class Search extends Component<Props, State> {
           <input
             id="search"
             value={this.state.value}
+            onKeyDown={this.handleKeyDown}
             onChange={this.handleInputChange}
             className="w-full p-3 rounded-md border-2 border-r-white rounded-r-none border-gray-300 placeholder-gray-500"
             type="text"

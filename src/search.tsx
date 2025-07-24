@@ -1,53 +1,45 @@
-import { Component, type ChangeEvent, type KeyboardEvent } from 'react';
+import { type ChangeEvent, type KeyboardEvent } from 'react';
+import useLocalStorage from './hooks/useLocalStorage';
 
 type Props = {
   onSearch: (term: string) => void;
 };
 
-type State = {
-  value: string;
-};
+export default function Search(prop: Props) {
+  const [searchState, setSearchState] = useLocalStorage<string>(
+    'searchState',
+    ''
+  );
 
-export default class Search extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    const savedState = localStorage.getItem('searchState') || '';
-    this.state = {
-      value: savedState,
-    };
-  }
-
-  handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ value: e.target.value });
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchState(e.target.value);
   };
 
-  handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      this.handleSearchClick();
+      handleSearchClick();
     }
   };
 
-  handleSearchClick = () => {
-    const trimmed = this.state.value.trim();
-    localStorage.setItem('searchState', trimmed);
-    this.props.onSearch(trimmed);
+  const handleSearchClick = () => {
+    searchState.trim();
+    prop.onSearch(searchState);
   };
-  render() {
+  {
     return (
       <div className="flex justify-center mt-6 flex-col mb-3">
         <h1 className="text-center text-3xl mb-5">Pokewiki</h1>
         <div className="flex relative rounded-md w-full px-4 max-w-xl mx-auto">
           <input
             id="search"
-            value={this.state.value}
-            onKeyDown={this.handleKeyDown}
-            onChange={this.handleInputChange}
+            value={searchState}
+            onKeyDown={handleKeyDown}
+            onChange={handleInputChange}
             className="w-full p-3 rounded-md border-2 border-r-white rounded-r-none border-gray-300 placeholder-gray-500"
             type="text"
           />
           <button
-            onClick={this.handleSearchClick}
+            onClick={handleSearchClick}
             className="inline-flex items-center gap-2 bg-violet-700 text-white text-lg font-semibold py-3 px-6 rounded-r-md"
           >
             <span>Search</span>

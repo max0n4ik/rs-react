@@ -4,22 +4,17 @@ import Search from './search';
 import type { SimplifiedPokemon } from './api/type';
 import CardList from './card-list';
 import ErrorButton from './error-button';
+import useLocalStorage from './hooks/useLocalStorage';
 
 export function App() {
   const [loading, setLoad] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<SimplifiedPokemon[]>([]);
-  const [searchState, setLocalStorage] = useState<string | null>(
-    localStorage.getItem('searchState')
-  );
+  const [searchState] = useLocalStorage<string>('searchState', '');
 
   useEffect(() => {
-    if (searchState === null) {
-      handleSearch('');
-    } else {
-      handleSearch(searchState);
-    }
-  }, [searchState, setLocalStorage]);
+    handleSearch(searchState);
+  }, [searchState]);
 
   const handleSearch = (term: string) => {
     setLoad(true);

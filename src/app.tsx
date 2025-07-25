@@ -3,7 +3,6 @@ import { fetchPokemon } from './api/api';
 import Search from './search';
 import type { SimplifiedPokemon } from './api/type';
 import CardList from './card-list';
-import ErrorButton from './error-button';
 import useLocalStorage from './hooks/useLocalStorage';
 
 export function App() {
@@ -63,7 +62,6 @@ export function App() {
       )}
 
       {!loading && !error && <CardList items={data} />}
-      <ErrorButton></ErrorButton>
     </>
   );
 }

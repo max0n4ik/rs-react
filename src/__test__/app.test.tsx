@@ -4,7 +4,6 @@ import { App } from '../app';
 import * as api from '../api/api';
 import type { SimplifiedPokemon } from '../api/type';
 import Search from '../search';
-import { ErrorBoundary } from '../error-boundary';
 
 vi.mock('../api/api', () => ({
   fetchPokemon: vi.fn(),
@@ -95,21 +94,5 @@ describe('App Component Integration Tests', () => {
         screen.getByText(/error: server unavailable/i)
       ).toBeInTheDocument();
     });
-  });
-
-  it('causes errorbinary when clicking on the "Get Error" button', async () => {
-    const consoleSpy = vi.spyOn(console, 'error');
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-
-    render(
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Get Error' }));
-
-    expect(consoleSpy).toHaveBeenCalled();
-    consoleSpy.mockRestore();
   });
 });

@@ -1,7 +1,11 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ErrorBoundary } from '../error-boundary';
-import { vi, describe, it, expect } from 'vitest';
-import ErrorButton from '../error-button';
+import { describe, it, expect } from 'vitest';
+import type { JSX } from 'react';
+
+function ThrowError(): JSX.Element {
+  throw new Error('Test error');
+}
 
 describe('ErrorBoundary', () => {
   it('render without error', () => {
@@ -12,16 +16,16 @@ describe('ErrorBoundary', () => {
     );
     expect(screen.getByText('Child component')).toBeInTheDocument();
   });
-
-  it('render fallback UI with error', async () => {
-    const consoleSpy = vi.spyOn(console, 'error');
-
+  it('render with error', () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     render(
       <ErrorBoundary>
-        <ErrorButton />
+        <ThrowError />
       </ErrorBoundary>
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Get Error' }));
+    expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+    expect(screen.getByText(/please refresh the page/i)).toBeInTheDocument();
+
     expect(consoleSpy).toHaveBeenCalled();
 
     consoleSpy.mockRestore();

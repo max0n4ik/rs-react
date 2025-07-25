@@ -18,3 +18,9 @@ export type SimplifiedPokemon = {
   image?: string;
   description: string;
 };
+
+export type CardProps = {
+  name: string;
+  image: string;
+  description: string;
+};

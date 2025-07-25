@@ -9,13 +9,23 @@ function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') return initialValue;
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : initialValue;
+    if (!item) return initialValue;
+
+    try {
+      return JSON.parse(item);
+    } catch {
+      return item as T;
+    }
   });
 
   const setValue = (value: SetValue<T>) => {
     const newValue = value instanceof Function ? value(storedValue) : value;
     setStoredValue(newValue);
-    localStorage.setItem(key, JSON.stringify(newValue));
+    if (typeof newValue === 'string') {
+      localStorage.setItem(key, newValue);
+    } else {
+      localStorage.setItem(key, JSON.stringify(newValue));
+    }
   };
 
   useEffect(() => {

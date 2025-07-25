@@ -13,7 +13,7 @@ export function App() {
   const [searchState] = useLocalStorage<string>('searchState', '');
 
   useEffect(() => {
-    handleSearch(searchState);
+    handleSearch(searchState.trim());
   }, [searchState]);
 
   const handleSearch = (term: string) => {

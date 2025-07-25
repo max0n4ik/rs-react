@@ -1,4 +1,4 @@
-import { type ChangeEvent, type KeyboardEvent } from 'react';
+import { type KeyboardEvent } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
 
 type Props = {
@@ -11,7 +11,7 @@ export default function Search(prop: Props) {
     ''
   );
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchState(e.target.value);
   };
 
@@ -22,8 +22,8 @@ export default function Search(prop: Props) {
   };
 
   const handleSearchClick = () => {
-    searchState.trim();
-    prop.onSearch(searchState);
+    setSearchState(searchState.trim());
+    prop.onSearch(searchState.trim());
   };
   {
     return (
@@ -33,8 +33,8 @@ export default function Search(prop: Props) {
           <input
             id="search"
             value={searchState}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
-            onChange={handleInputChange}
             className="w-full p-3 rounded-md border-2 border-r-white rounded-r-none border-gray-300 placeholder-gray-500"
             type="text"
           />

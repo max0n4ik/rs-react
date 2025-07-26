@@ -1,6 +1,6 @@
 import { API } from '../utils/constants';
 import type {
-  PokemonAPIResponse,
+  NamedAPIResourceList,
   PokemonDetails,
   SimplifiedPokemon,
 } from './type';
@@ -13,7 +13,7 @@ export async function fetchPokemon(
   if (trimmed === '') {
     const res = await fetch(`${API.API_URL}?limit=9`);
     if (!res.ok) throw new Error(`Error: ${res.status}`);
-    const data: PokemonAPIResponse = await res.json();
+    const data: NamedAPIResourceList = await res.json();
 
     const detailed = await Promise.all(
       data.results.map((p) => fetchPokemonDetails(p.url))

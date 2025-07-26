@@ -1,10 +1,54 @@
 import { fetchPokemon } from '../api/api';
 import { API } from '../utils/constants';
-import type { PokemonAPIResponse, PokemonDetails } from '../api/type';
+import type { NamedAPIResourceList } from '../api/type';
 
-global.fetch = vi.fn();
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
-const mockFetch = global.fetch as ReturnType<typeof vi.fn>;
+const mockPokemonListResponse: NamedAPIResourceList = {
+  results: [
+    { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
+  ],
+  count: 1,
+  next: null,
+  previous: null,
+};
+
+const mockPokemonDetails = (name: string) => ({
+  id: name === 'pikachu' ? 25 : 1,
+  name,
+  sprites: { front_default: `${name}.png` },
+  species: {
+    name: name,
+    url: `https://pokeapi.co/api/v2/pokemon-species/${name}/`,
+  },
+  types: [{ slot: 1, type: { name: 'electric', url: '' } }],
+  abilities: [
+    { ability: { name: 'static', url: '' }, is_hidden: false, slot: 1 },
+  ],
+  base_experience: 112,
+  height: 4,
+  weight: 60,
+  stats: [
+    { base_stat: 35, effort: 0, stat: { name: 'hp', url: '' } },
+    { base_stat: 55, effort: 2, stat: { name: 'attack', url: '' } },
+  ],
+});
+
+const mockSpeciesDetails = (name: string) => ({
+  gender_rate: 4,
+  capture_rate: 45,
+  egg_groups: [{ name: 'monster', url: '' }],
+  hatch_counter: 20,
+  growth_rate: { name: 'medium-slow', url: '' },
+  color: { name: 'yellow', url: '' },
+  shape: { name: 'quadruped', url: '' },
+  base_happiness: 70,
+  has_footprint: true,
+  id: name === 'pikachu' ? 25 : 1,
+  name,
+  url: `https://pokeapi.co/api/v2/pokemon-species/${name}/`,
+});
 
 describe('fetchPokemon', () => {
   afterEach(() => {
@@ -12,63 +56,44 @@ describe('fetchPokemon', () => {
   });
 
   it('fetches default list (limit=9) when term is empty', async () => {
-    const mockListResponse: PokemonAPIResponse = {
-      results: [
-        { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
-        {
-          name: 'bulbasaur',
-          url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
-        },
-      ],
-    };
-
-    const mockDetailsResponse = (name: string): PokemonDetails => ({
-      name,
-      height: 4,
-      weight: 60,
-      sprites: { front_default: `${name}.png` },
-      types: [{ type: { name: 'electric' } }],
-    });
-
     mockFetch
-      .mockResolvedValueOnce({ ok: true, json: async () => mockListResponse })
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => mockDetailsResponse('pikachu'),
+        json: async () => mockPokemonListResponse,
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => mockDetailsResponse('bulbasaur'),
+        json: async () => mockPokemonDetails('pikachu'),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockSpeciesDetails('pikachu'),
       });
 
     const result = await fetchPokemon('');
 
-    expect(fetch).toHaveBeenCalledWith(`${API.API_URL}?limit=9`);
-    expect(result).toHaveLength(2);
+    expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}?limit=9`);
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://pokeapi.co/api/v2/pokemon/pikachu'
+    );
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://pokeapi.co/api/v2/pokemon-species/pikachu/'
+    );
+
+    expect(result).toHaveLength(1);
     expect(result[0].name).toBe('pikachu');
+    expect(result[0].id).toBe(25);
+    expect(result[0].image).toBe('pikachu.png');
   });
 
   it('fetches specific pokemon by name', async () => {
-    const name = 'charizard';
-    const details: PokemonDetails = {
-      name,
-      height: 10,
-      weight: 200,
-      sprites: { front_default: 'charizard.png' },
-      types: [{ type: { name: 'fire' } }],
-    };
+    const searchTerm = 'charizard';
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 404 });
 
-    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => details });
-
-    const result = await fetchPokemon('  Charizard  ');
-
-    expect(fetch).toHaveBeenCalledWith(`${API.API_URL}/charizard`);
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({
-      name: 'charizard',
-      image: 'charizard.png',
-      description: 'Type: fire, Height: 10, Weight: 200',
-    });
+    await expect(fetchPokemon(searchTerm)).rejects.toThrow(
+      `Pokemon "${searchTerm}" not found`
+    );
+    expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}/${searchTerm}`);
   });
 
   it('throws error if list fetch fails', async () => {
@@ -86,17 +111,10 @@ describe('fetchPokemon', () => {
     expect(fetch).toHaveBeenCalledWith(`${API.API_URL}/unknownmon`);
   });
 
-  it('throws error if details fetch fails (inside list)', async () => {
-    const mockListResponse: PokemonAPIResponse = {
-      results: [
-        { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
-      ],
-    };
+  it('throws an error when fetching default list fails', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
 
-    mockFetch
-      .mockResolvedValueOnce({ ok: true, json: async () => mockListResponse })
-      .mockResolvedValueOnce({ ok: false, status: 404 });
-
-    await expect(fetchPokemon('')).rejects.toThrow('Error: 404');
+    await expect(fetchPokemon('')).rejects.toThrow('Error: 500');
+    expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}?limit=9`);
   });
 });

@@ -1,17 +1,19 @@
-export type PokemonAPIResponse = {
-  results: {
-    name: string;
-    url: string;
-  }[];
+export type NamedAPIResourceList = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: NamedAPIResource[];
+};
+
+export type NamedAPIResource = {
+  name: string;
+  url: string;
 };
 
 export type PokemonDetails = {
   id: number;
   name: string;
   sprites: { front_default: string };
-  weight: number;
-  height: number;
-  types: { type: { name: string } }[];
 };
 
 export type DataPokemon = {

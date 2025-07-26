@@ -21,9 +21,6 @@ export default function DetailCard() {
       <div className="max-w-xs mx-auto bg-white rounded-xl border-4 border-green-300 shadow-xl font-sans overflow-hidden text-sm">
         <div className="bg-green-100 text-center py-2 border-b border-green-300 relative">
           <h2 className="text-lg font-bold capitalize">{data?.name}</h2>
-          <p className="text-xs italic text-gray-700">
-            <span>{}</span> — Fushigidane
-          </p>
           <span className="absolute top-2 right-2 bg-white border rounded px-2 text-black font-bold">
             #{data?.id.toString().padStart(4, '0')}
           </span>

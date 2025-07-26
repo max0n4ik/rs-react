@@ -21,10 +21,11 @@ createRoot(rootElement).render(
     <ErrorBoundary>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/" element={<App />}>
+            <Route path="detail/:id" element={<DetailCard />} />
+          </Route>
           <Route path="about" element={<About />} />
           <Route path="*" element={<NotFound />} />
-          <Route path="detail/:id" element={<DetailCard />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>

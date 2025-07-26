@@ -27,7 +27,7 @@ export default function Search(prop: Props) {
   };
   {
     return (
-      <div className="flex justify-center mt-6 flex-col mb-3">
+      <div className="flex justify-center  flex-col mb-8">
         <h1 className="text-center text-3xl mb-5">Pokewiki</h1>
         <div className="flex relative rounded-md w-full px-4 max-w-xl mx-auto">
           <input
@@ -40,7 +40,7 @@ export default function Search(prop: Props) {
           />
           <button
             onClick={handleSearchClick}
-            className="inline-flex items-center gap-2 bg-violet-700 text-white text-lg font-semibold py-3 px-6 rounded-r-md"
+            className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-r-md"
           >
             <span>Search</span>
           </button>

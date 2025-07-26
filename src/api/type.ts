@@ -6,6 +6,7 @@ export type PokemonAPIResponse = {
 };
 
 export type PokemonDetails = {
+  id: number;
   name: string;
   sprites: { front_default: string };
   weight: number;
@@ -13,14 +14,35 @@ export type PokemonDetails = {
   types: { type: { name: string } }[];
 };
 
-export type SimplifiedPokemon = {
-  name: string;
-  image?: string;
-  description: string;
+export type DataPokemon = {
+  data: SimplifiedPokemon[];
 };
 
-export type CardProps = {
+export interface SimplifiedPokemon {
+  id: number;
   name: string;
   image: string;
-  description: string;
-};
+  types: string[];
+  abilities: {
+    name: string;
+    isHidden: boolean;
+  }[];
+  genderRatio: {
+    male: number;
+    female: number;
+  } | null;
+  catchRate: number;
+  eggGroups: string[];
+  hatchTime: number;
+  height: number;
+  weight: number;
+  baseExp: number;
+  growthRate: string;
+  evYield: {
+    [stat: string]: number;
+  };
+  color: string;
+  shape: string;
+  baseFriendship: number;
+  footprint: string | null;
+}

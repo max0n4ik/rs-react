@@ -1,8 +1,11 @@
-import type { SimplifiedPokemon } from './api/type';
 import Card from './card';
 
 type Props = {
-  items: SimplifiedPokemon[];
+  items: {
+    id: number;
+    name: string;
+    image?: string;
+  }[];
 };
 
 export default function CardList({ items }: Props) {
@@ -15,8 +18,8 @@ export default function CardList({ items }: Props) {
       {items.map((item, index) => (
         <Card
           key={index}
+          id={item.id}
           name={item.name}
-          description={item.description}
           image={item.image ?? ''}
         />
       ))}

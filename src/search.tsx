@@ -1,11 +1,13 @@
 import { type KeyboardEvent } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
+import { useSearchParams } from 'react-router';
 
 type Props = {
   onSearch: (term: string) => void;
 };
 
 export default function Search(prop: Props) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchState, setSearchState] = useLocalStorage<string>(
     'searchState',
     ''
@@ -22,6 +24,8 @@ export default function Search(prop: Props) {
   };
 
   const handleSearchClick = () => {
+    searchParams.set('page', String(1));
+    setSearchParams(searchParams);
     setSearchState(searchState.trim());
     prop.onSearch(searchState.trim());
   };

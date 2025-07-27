@@ -11,7 +11,7 @@ export async function fetchPokemon(
   const trimmed = term.trim().toLowerCase();
 
   if (trimmed === '') {
-    const res = await fetch(`${API.API_URL}?limit=9`);
+    const res = await fetch(`${API.API_URL}?limit=50`);
     if (!res.ok) throw new Error(`Error: ${res.status}`);
     const data: NamedAPIResourceList = await res.json();
 

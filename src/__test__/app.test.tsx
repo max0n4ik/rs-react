@@ -74,7 +74,11 @@ describe('App Component Integration Tests', () => {
   it('calls the API with the correct parameters when searching', async () => {
     vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
 
-    render(<Search onSearch={api.fetchPokemon} />);
+    render(
+      <BrowserRouter>
+        <Search onSearch={api.fetchPokemon} />
+      </BrowserRouter>
+    );
 
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'bulbasaur' },

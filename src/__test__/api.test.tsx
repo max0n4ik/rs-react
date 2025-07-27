@@ -72,7 +72,7 @@ describe('fetchPokemon', () => {
 
     const result = await fetchPokemon('');
 
-    expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}?limit=9`);
+    expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}?limit=50`);
     expect(mockFetch).toHaveBeenCalledWith(
       'https://pokeapi.co/api/v2/pokemon/pikachu'
     );
@@ -115,6 +115,6 @@ describe('fetchPokemon', () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
 
     await expect(fetchPokemon('')).rejects.toThrow('Error: 500');
-    expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}?limit=9`);
+    expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}?limit=50`);
   });
 });

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { fetchPokemonDetails } from './api/api';
 import type { SimplifiedPokemon } from './api/type';
 import { API, typeColors } from './utils/constants';
@@ -8,6 +8,7 @@ import classNames from 'classnames';
 export default function DetailCard() {
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [data, setData] = useState<SimplifiedPokemon>();
 
   useEffect(() => {
@@ -126,7 +127,7 @@ export default function DetailCard() {
       </div>
       <button
         className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-md"
-        onClick={() => navigate('/')}
+        onClick={() => navigate('..' + location.search, { replace: true })}
       >
         Закрыть
       </button>

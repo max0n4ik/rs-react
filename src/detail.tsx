@@ -14,7 +14,7 @@ export default function DetailCard() {
 
   useEffect(() => {
     setLoad(true);
-    fetchPokemonDetails(`${API.API_URL}/${params.id}`).then((data) => {
+    fetchPokemonDetails(`${API.API_URL}${params.id}`).then((data) => {
       setData(data);
       setLoad(false);
     });

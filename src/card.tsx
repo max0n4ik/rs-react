@@ -32,6 +32,7 @@ export default function Card({ id, name, image }: Props) {
     >
       <div className="border p-4 rounded shadow bg-white hover:shadow-md transition flex flex-col">
         <input
+          className="size-4 self-end"
           type="checkbox"
           checked={isSelected}
           onChange={(e) => {

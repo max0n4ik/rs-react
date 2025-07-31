@@ -36,10 +36,12 @@ export const counterSlice = createSlice({
         (pokemon) => pokemon.id !== id
       );
     },
-    dowloandCard: () => {},
+    clearCards: (state) => {
+      state.selectedPokemons = [];
+    },
   },
 });
 
-export const { addCard, removeCard, dowloandCard } = counterSlice.actions;
+export const { addCard, removeCard, clearCards } = counterSlice.actions;
 
 export default counterSlice.reducer;

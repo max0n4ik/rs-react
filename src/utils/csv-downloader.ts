@@ -1,35 +1,94 @@
+import type { SimplifiedPokemon } from '../api/type';
+import { fetchPokemonDetails } from '../api/api';
+
 type CardProps = {
   id: number;
   name: string;
   image?: string;
 };
 
-const createCSV = (cards: CardProps[]): string => {
-  const header = 'id,name,image_url';
+const createDetailedCSV = (pokemonList: SimplifiedPokemon[]): string => {
+  const header = [
+    'id',
+    'name',
+    'image_url',
+    'types',
+    'abilities',
+    'gender_male',
+    'gender_female',
+    'catch_rate',
+    'egg_groups',
+    'hatch_time',
+    'height_m',
+    'weight_kg',
+    'base_exp',
+    'growth_rate',
+    'ev_yield',
+    'color',
+    'shape',
+    'base_friendship',
+    'footprint',
+  ].join(',');
 
-  if (cards.length === 0) {
-    return header;
-  }
+  const rows = pokemonList.map((p) => {
+    const abilities = p.abilities
+      .map((a) => `${a.name}${a.isHidden ? ' (hidden)' : ''}`)
+      .join(';');
+    const types = p.types.join(';');
+    const eggGroups = p.eggGroups.join(';');
+    const evYield = Object.entries(p.evYield)
+      .map(([stat, val]) => `${stat}:${val}`)
+      .join(';');
 
-  const rows = cards
-    .map((card) => `${card.id},"${card.name}",${card.image}`)
-    .join('\n');
+    return [
+      p.id,
+      `"${p.name}"`,
+      p.image,
+      `"${types}"`,
+      `"${abilities}"`,
+      p.genderRatio?.male ?? '',
+      p.genderRatio?.female ?? '',
+      p.catchRate,
+      `"${eggGroups}"`,
+      p.hatchTime,
+      p.height,
+      p.weight,
+      p.baseExp,
+      p.growthRate,
+      `"${evYield}"`,
+      p.color,
+      p.shape,
+      p.baseFriendship,
+      p.footprint ?? '',
+    ].join(',');
+  });
 
-  return `${header}\n${rows}`;
+  return `${header}\n${rows.join('\n')}`;
 };
 
-export const downloadCSV = (cards: CardProps[]) => {
-  const csvContent = createCSV(cards);
+export const downloadCSV = async (cards: CardProps[]) => {
+  if (cards.length === 0) return;
+
+  const detailedList: SimplifiedPokemon[] = [];
+
+  for (const card of cards) {
+    const url = `https://pokeapi.co/api/v2/pokemon/${card.id}`;
+    try {
+      const details = await fetchPokemonDetails(url);
+      detailedList.push(details);
+    } catch (err) {
+      console.warn(`Не удалось получить данные для id=${card.id}:`, err);
+    }
+  }
+
+  const csvContent = createDetailedCSV(detailedList);
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
 
   link.setAttribute('href', url);
-  link.setAttribute('download', 'selected_cards.csv');
-
+  link.setAttribute('download', `${cards.length}_items.csv`);
   link.click();
-
   URL.revokeObjectURL(url);
 };

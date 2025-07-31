@@ -5,14 +5,23 @@ import type { SimplifiedPokemon } from './api/type';
 import CardList from './card-list';
 import useLocalStorage from './hooks/useLocalStorage';
 import { Link, Outlet } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from './store/store';
+import Flyout from './flyout';
+import { clearCards } from './store/card-slice';
+import { downloadCSV } from './utils/csv-downloader';
 
 export function App() {
+  const dispatch = useDispatch();
   const [loading, setLoad] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<
     Pick<SimplifiedPokemon, 'name' | 'image' | 'id'>[]
   >([]);
   const [searchState] = useLocalStorage<string>('searchState', '');
+  const selectedPokemons = useSelector(
+    (state: RootState) => state.card.selectedPokemons
+  );
 
   useEffect(() => {
     handleSearch(searchState.trim());
@@ -78,6 +87,17 @@ export function App() {
       <div>
         <Outlet />
       </div>
+      {selectedPokemons.length != 0 && (
+        <Flyout
+          selectedCount={selectedPokemons.length}
+          onDownload={() => {
+            downloadCSV(selectedPokemons);
+          }}
+          onUnselectAll={() => {
+            dispatch(clearCards());
+          }}
+        />
+      )}
     </div>
   );
 }

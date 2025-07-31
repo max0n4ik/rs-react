@@ -5,10 +5,21 @@ import * as api from '../api/api';
 import type { SimplifiedPokemon } from '../api/type';
 import Search from '../search';
 import { BrowserRouter } from 'react-router';
+import { Provider } from 'react-redux';
+import { store } from '../store/store';
+import type { JSX } from 'react';
 
 vi.mock('../api/api', () => ({
   fetchPokemon: vi.fn(),
 }));
+
+const renderWithRouter = (component: JSX.Element) => {
+  return render(
+    <BrowserRouter>
+      <Provider store={store}>{component}</Provider>
+    </BrowserRouter>
+  );
+};
 
 const mockData = [
   {
@@ -26,11 +37,7 @@ describe('App Component Integration Tests', () => {
   it('Initialization call API ', async () => {
     vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
 
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    );
+    renderWithRouter(<App />);
     await waitFor(() => {
       expect(api.fetchPokemon).toHaveBeenCalledWith('');
     });
@@ -40,11 +47,7 @@ describe('App Component Integration Tests', () => {
     localStorage.setItem('searchState', 'Pikachu');
     vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
 
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    );
+    renderWithRouter(<App />);
     await waitFor(() => {
       expect(api.fetchPokemon).toHaveBeenCalledWith('Pikachu');
     });
@@ -58,11 +61,7 @@ describe('App Component Integration Tests', () => {
 
     vi.spyOn(api, 'fetchPokemon').mockReturnValueOnce(pendingPromise);
 
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    );
+    renderWithRouter(<App />);
     expect(screen.getByRole('status')).toBeInTheDocument();
 
     resolvePromise(mockData);
@@ -92,11 +91,7 @@ describe('App Component Integration Tests', () => {
 
   it('processes the successful API response and displays the cards', async () => {
     vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    );
+    renderWithRouter(<App />);
     await waitFor(() => {
       expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
     });
@@ -107,11 +102,7 @@ describe('App Component Integration Tests', () => {
       new Error('Server unavailable')
     );
 
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    );
+    renderWithRouter(<App />);
     await waitFor(() => {
       expect(
         screen.getByText(/error: server unavailable/i)

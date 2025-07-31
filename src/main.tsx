@@ -6,6 +6,8 @@ import { ErrorBoundary } from './error-boundary';
 import About from './about';
 import NotFound from './404';
 import DetailCard from './detail';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
 const rootElement =
   document.querySelector('#root') ??
@@ -21,7 +23,14 @@ createRoot(rootElement).render(
     <ErrorBoundary>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />}>
+          <Route
+            path="/"
+            element={
+              <Provider store={store}>
+                <App />
+              </Provider>
+            }
+          >
             <Route path="detail/:id" element={<DetailCard />} />
           </Route>
           <Route path="about" element={<About />} />

@@ -47,7 +47,7 @@ export default function Search(prop: Props) {
             value={searchState}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            className="w-full p-3 rounded-md border-2 border-r-white rounded-r-none border-gray-300 placeholder-gray-500"
+            className="w-full p-3 rounded-md border-2 border-r-white rounded-r-none border-gray-300 placeholder-gray-500 dark:text-white"
             type="text"
           />
           <button

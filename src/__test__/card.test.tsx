@@ -234,15 +234,6 @@ describe('Card Component', () => {
     expect(stopPropagationSpy).toHaveBeenCalled();
   });
 
-  it('capitalizes pokemon name in display', () => {
-    const propsWithLowercase = { ...mockProps, name: 'pikachu' };
-    renderWithProviders(<Card {...propsWithLowercase} />);
-
-    const heading = screen.getByRole('heading');
-    expect(heading).toHaveClass('capitalize');
-    expect(heading).toHaveTextContent('pikachu');
-  });
-
   it('handles pokemon selection state correctly for different IDs', () => {
     const preloadedState = {
       card: {

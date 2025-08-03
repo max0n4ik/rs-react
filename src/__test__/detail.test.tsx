@@ -1,11 +1,18 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+  act,
+} from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import DetailCard from '../detail';
 import * as api from '../api/api';
 import type { SimplifiedPokemon } from '../api/type';
+import type { JSX } from 'react/jsx-runtime';
 
-vi.mock('./api/api', () => ({
+vi.mock('../api/api', () => ({
   fetchPokemonDetails: vi.fn(),
 }));
 
@@ -145,10 +152,12 @@ describe('DetailCard', async () => {
     expect(mockNavigate).toHaveBeenCalledWith('..?page=1', { replace: true });
   });
 
-  it('fetches pokemon details with correct API URL', () => {
+  it('fetches pokemon details with correct API URL', async () => {
     vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
 
-    renderComponent();
+    await act(async () => {
+      renderComponent();
+    });
 
     expect(api.fetchPokemonDetails).toHaveBeenCalledWith(
       'https://pokeapi.co/api/v2/pokemon/1'
@@ -160,17 +169,23 @@ describe('DetailCard', async () => {
       .spyOn(api, 'fetchPokemonDetails')
       .mockResolvedValue(mockPokemonData);
 
-    const { rerender } = renderComponent();
+    let rerender: (arg0: JSX.Element) => void;
+    await act(async () => {
+      ({ rerender } = renderComponent());
+    });
 
     expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/1');
 
     mockUseParams.mockReturnValue({ id: '2' });
 
-    rerender(
-      <BrowserRouter>
-        <DetailCard />
-      </BrowserRouter>
-    );
+    await act(async () => {
+      rerender(
+        <BrowserRouter>
+          <DetailCard />
+        </BrowserRouter>
+      );
+    });
 
     expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenLastCalledWith('https://pokeapi.co/api/v2/pokemon/2');

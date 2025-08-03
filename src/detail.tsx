@@ -22,6 +22,12 @@ export default function DetailCard() {
 
   return (
     <div className="flex flex-col items-center justify-center  text-center">
+      <button
+        className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-md"
+        onClick={() => navigate('..' + location.search, { replace: true })}
+      >
+        Close
+      </button>
       {loading && (
         <div role="status" className="flex items-center justify-center">
           <svg
@@ -153,12 +159,6 @@ export default function DetailCard() {
           </>
         )}
       </div>
-      <button
-        className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-md"
-        onClick={() => navigate('..' + location.search, { replace: true })}
-      >
-        Close
-      </button>
     </div>
   );
 }

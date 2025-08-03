@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from './store/store';
 import Flyout from './flyout';
 import { clearCards } from './store/card-slice';
-import { downloadCSV } from './utils/csv-downloader';
 
 export function App() {
   const dispatch = useDispatch();
@@ -90,9 +89,6 @@ export function App() {
       {selectedPokemons.length != 0 && (
         <Flyout
           selectedCount={selectedPokemons.length}
-          onDownload={() => {
-            downloadCSV(selectedPokemons);
-          }}
           onUnselectAll={() => {
             dispatch(clearCards());
           }}

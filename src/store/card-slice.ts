@@ -19,7 +19,7 @@ type AddPokemonPayload = {
 type RemovePokemonPayload = {
   id: number;
 };
-export const counterSlice = createSlice({
+export const cardSlice = createSlice({
   name: 'card',
   initialState,
   reducers: {
@@ -42,6 +42,6 @@ export const counterSlice = createSlice({
   },
 });
 
-export const { addCard, removeCard, clearCards } = counterSlice.actions;
+export const { addCard, removeCard, clearCards } = cardSlice.actions;
 
-export default counterSlice.reducer;
+export default cardSlice.reducer;

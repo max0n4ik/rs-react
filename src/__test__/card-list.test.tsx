@@ -50,4 +50,15 @@ describe('CardList Component', () => {
     renderWithRouter(<CardList items={brokenItems} />);
     expect(screen.getByText('Mewtwo')).toBeInTheDocument();
   });
+
+  it('navigates to the correct detail page when a card is clicked', () => {
+    renderWithRouter(<CardList items={mockItems} />);
+
+    const pikachuLink = screen.getByRole('link', { name: /Pikachu/i });
+
+    expect(pikachuLink).toHaveAttribute(
+      'href',
+      expect.stringContaining('/detail/25')
+    );
+  });
 });

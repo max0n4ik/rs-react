@@ -8,7 +8,7 @@ import NotFound from './404';
 import DetailCard from './detail';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
-import { ThemeProvider } from './themeProvider';
+import { ThemeProvider } from './theme-provider';
 
 const rootElement =
   document.querySelector('#root') ??

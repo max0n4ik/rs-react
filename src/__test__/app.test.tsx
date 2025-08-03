@@ -8,6 +8,8 @@ import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
 import type { JSX } from 'react';
+import cardSlice from '../store/card-slice';
+import { configureStore } from '@reduxjs/toolkit';
 
 vi.mock('../api/api', () => ({
   fetchPokemon: vi.fn(),
@@ -108,5 +110,29 @@ describe('App Component Integration Tests', () => {
         screen.getByText(/error: server unavailable/i)
       ).toBeInTheDocument();
     });
+  });
+
+  it('renders a card as selected if it is already in the Redux store', () => {
+    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
+    const preloadedState = {
+      card: {
+        selectedPokemons: [{ id: 25, name: 'Pikachu', image: 'pikachu.png' }],
+      },
+    };
+
+    const storeWithPreloadedState = configureStore({
+      reducer: { card: cardSlice },
+      preloadedState,
+    });
+
+    render(
+      <BrowserRouter>
+        <Provider store={storeWithPreloadedState}>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('1 item selected')).toBeInTheDocument();
   });
 });

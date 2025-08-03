@@ -5,9 +5,9 @@ type PaginationProps = {
 
 export default function Pagination({ currentPage, onChange }: PaginationProps) {
   return (
-    <div className="flex justify-center items-center gap-2 w-full ">
+    <div className="flex justify-center items-center gap-2 w-full dark:text-white ">
       <button
-        className="p-2 border rounded-xl cursor-pointer"
+        className="p-2 border rounded-xl cursor-pointer "
         onClick={() => onChange(currentPage - 1)}
       >
         <svg

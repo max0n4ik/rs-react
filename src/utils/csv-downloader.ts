@@ -77,7 +77,7 @@ export const downloadCSV = async (cards: CardProps[]) => {
       const details = await fetchPokemonDetails(url);
       detailedList.push(details);
     } catch (err) {
-      console.warn(`Не удалось получить данные для id=${card.id}:`, err);
+      console.warn(`invalid id: id=${card.id}:`, err);
     }
   }
 

@@ -43,19 +43,21 @@ export default function DetailCard() {
           <span className="sr-only">Loading...</span>
         </div>
       )}
-      <div className="max-w-xs mx-auto bg-white rounded-xl border-4 border-green-300 shadow-xl font-sans overflow-hidden text-sm">
+      <div className="max-w-xs mx-auto bg-white rounded-xl border-4 border-green-300 shadow-xl font-sans overflow-hidden text-sm dark:text-white dark:bg-black">
         {!loading && (
           <>
             <div className="bg-green-100 text-center py-2 border-b border-green-300 relative">
-              <h2 className="text-lg font-bold capitalize">{data?.name}</h2>
-              <span className="absolute top-2 right-2 bg-white border rounded px-2 text-black font-bold">
+              <h2 className="text-lg font-bold capitalize dark:text-black">
+                {data?.name}
+              </h2>
+              <span className="absolute top-2 right-2 bg-white border rounded px-2 text-black font-bold dark:text-white dark:bg-black">
                 #{data?.id.toString().padStart(4, '0')}
               </span>
             </div>
             <img
               src={data?.image}
               alt="Bulbasaur"
-              className="w-full h-auto object-contain render-pixel bg-white"
+              className="w-full h-auto object-contain render-pixel"
             />
             <div className="p-3 space-y-2">
               <p className="text-center">Types:</p>

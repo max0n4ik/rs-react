@@ -8,6 +8,7 @@ import NotFound from './404';
 import DetailCard from './detail';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { ThemeProvider } from './themeProvider';
 
 const rootElement =
   document.querySelector('#root') ??
@@ -27,14 +28,37 @@ createRoot(rootElement).render(
             path="/"
             element={
               <Provider store={store}>
-                <App />
+                <ThemeProvider>
+                  <App />
+                </ThemeProvider>
               </Provider>
             }
           >
-            <Route path="detail/:id" element={<DetailCard />} />
+            <Route
+              path="detail/:id"
+              element={
+                <ThemeProvider>
+                  <DetailCard />
+                </ThemeProvider>
+              }
+            />
           </Route>
-          <Route path="about" element={<About />} />
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path="about"
+            element={
+              <ThemeProvider>
+                <About />
+              </ThemeProvider>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <ThemeProvider>
+                <NotFound />
+              </ThemeProvider>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>

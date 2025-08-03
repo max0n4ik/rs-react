@@ -30,7 +30,7 @@ export default function Card({ id, name, image }: Props) {
         search: location.search,
       }}
     >
-      <div className="border p-4 rounded shadow bg-white hover:shadow-md transition flex flex-col">
+      <div className="border p-4 rounded shadow bg-white dark:bg-black hover:shadow-md dark:border-white transition flex flex-col">
         <input
           className="size-4 self-end"
           type="checkbox"
@@ -42,7 +42,9 @@ export default function Card({ id, name, image }: Props) {
           onClick={(e) => e.stopPropagation()}
         />
         <img src={image} alt="" className="render-pixel size-29 self-center" />
-        <h2 className="text-lg font-semibold capitalize text-center">{name}</h2>
+        <h2 className="text-lg font-semibold capitalize text-center dark:text-white">
+          {name}
+        </h2>
       </div>
     </Link>
   );

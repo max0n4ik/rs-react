@@ -42,7 +42,7 @@ export function App() {
   };
 
   return (
-    <div className="flex gap-10 items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex gap-10 items-center justify-center min-h-screen bg-gray-100 dark:bg-black">
       <div className="">
         <Search onSearch={handleSearch}></Search>
 

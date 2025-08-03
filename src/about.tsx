@@ -2,14 +2,14 @@ import { Link } from 'react-router';
 
 export default function About() {
   return (
-    <section className="bg-white min-h-screen flex items-center justify-center">
+    <section className="bg-white min-h-screen flex items-center justify-center dark:bg-black">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
         <div className="mx-auto max-w-screen-sm text-center">
           <h1 className="mb-7 text-7xl tracking-tight font-extrabold lg:text-9xl text-[#60a5fa] ">
             About
           </h1>
           <div className="mb-3 flex justify-center items-center text-3xl tracking-tight font-bold text-gray-900 md:text-4xl ">
-            <p className="mr-1">Created by </p>
+            <p className="mr-1 dark:text-white">Created by </p>
             <a
               className="flex gap-2 items-center bg-[#60a5fa] text-white p-2 rounded-2xl"
               target="_blank"
@@ -28,7 +28,9 @@ export default function About() {
               </svg>
             </a>
           </div>
-          <p className="mb-3 text-3xl text-gray-900 font-bold ">for</p>
+          <p className="mb-3 text-3xl text-gray-900 font-bold dark:text-white">
+            for
+          </p>
           <div className="mb-3 flex justify-center items-center text-3xl tracking-tight font-bold text-gray-900 md:text-4xl ">
             <a
               className="flex gap-2 items-center bg-[#ffda1f] text-white p-2 rounded-2xl"

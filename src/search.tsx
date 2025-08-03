@@ -1,6 +1,7 @@
-import { type KeyboardEvent } from 'react';
+import { useContext, type KeyboardEvent } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
 import { useSearchParams } from 'react-router';
+import { ThemeContext } from './store/context-store';
 
 type Props = {
   onSearch: (term: string) => void;
@@ -8,6 +9,7 @@ type Props = {
 
 export default function Search(prop: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const [searchState, setSearchState] = useLocalStorage<string>(
     'searchState',
     ''
@@ -34,6 +36,12 @@ export default function Search(prop: Props) {
       <div className="flex justify-center  flex-col mb-8">
         <h1 className="text-center text-3xl mb-5">Pokewiki</h1>
         <div className="flex relative rounded-md w-full px-4 max-w-xl mx-auto">
+          <button
+            className="border-2 mr-9 p-3 rounded-md border-gray-300 dark:border-gray-100 dark:bg-black dark:text-white"
+            onClick={toggleTheme}
+          >
+            {theme}
+          </button>
           <input
             id="search"
             value={searchState}

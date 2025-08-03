@@ -2,13 +2,13 @@ import { Link } from 'react-router';
 
 export default function NotFound() {
   return (
-    <section className="bg-white min-h-screen flex items-center justify-center">
+    <section className="bg-white min-h-screen flex items-center justify-center dark:bg-black">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
         <div className="mx-auto max-w-screen-sm text-center">
           <h1 className="mb-4 text-7xl tracking-tight font-extrabold lg:text-9xl text-[#60a5fa] ">
             404
           </h1>
-          <p className="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl ">
+          <p className="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
             Something&apos;s missing.
           </p>
           <p className="mb-4 text-lg font-medium text-gray-500 ">

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { ErrorBoundary } from '../error-boundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { describe, it, expect } from 'vitest';
 import type { JSX } from 'react';
 

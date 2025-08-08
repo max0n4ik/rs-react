@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { describe, it, expect } from 'vitest';
-import About from '../about';
+import About from '@/page/About';
 import type { JSX } from 'react';
 
 const renderWithRouter = (component: JSX.Element) => {

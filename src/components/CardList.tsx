@@ -1,5 +1,5 @@
-import Card from './card';
-import Pagination from './pagination';
+import Card from '@/components/Card';
+import Pagination from '@/components/Pagination';
 import { useSearchParams } from 'react-router';
 
 type Props = {

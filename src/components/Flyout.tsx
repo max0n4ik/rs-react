@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { downloadCSV } from './utils/csv-downloader';
+import { downloadCSV } from '@/utils/CsvDownloader';
 import { useSelector } from 'react-redux';
-import type { RootState } from './store/store';
+import type { RootState } from '@/store/Store';
 
 type FlyoutProps = {
   selectedCount: number;

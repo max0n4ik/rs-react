@@ -1,15 +1,15 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { App } from '../app';
+import { App } from '@/page/App';
 
-import * as api from '../api/api';
-import type { SimplifiedPokemon } from '../api/type';
-import Search from '../search';
+import * as api from '@/api/Api';
+import type { SimplifiedPokemon } from '@/api/Type';
+import Search from '@/components/Search';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
-import { store } from '../store/store';
+import { store } from '@/store/Store';
 import { type JSX } from 'react';
 
-vi.mock('../api/api', () => ({
+vi.mock('@/api/Api', () => ({
   fetchPokemon: vi.fn(),
   fetchPokemonDetails: vi.fn(),
 }));

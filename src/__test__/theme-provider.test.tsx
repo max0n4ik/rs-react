@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '../theme-provider';
-import { ThemeContext } from '../store/context-store';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeContext } from '@/store/ContextStore';
 import { useContext } from 'react';
 
 const ThemeConsumer = () => {

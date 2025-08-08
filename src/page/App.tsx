@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { fetchPokemon } from './api/api';
-import Search from './search';
-import type { SimplifiedPokemon } from './api/type';
-import CardList from './card-list';
-import useLocalStorage from './hooks/useLocalStorage';
+import { fetchPokemon } from '@/api/Api';
+import Search from '@/components/Search';
+import type { SimplifiedPokemon } from '@/api/Type';
+import CardList from '@/components/CardList';
+import useLocalStorage from '@/hooks/UseLocalStorage';
 import { Link, Outlet } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from './store/store';
-import Flyout from './flyout';
-import { clearCards } from './store/card-slice';
+import type { RootState } from '@/store/Store';
+import Flyout from '@/components/Flyout';
+import { clearCards } from '@/store/CardSlice';
 
 export function App() {
   const dispatch = useDispatch();

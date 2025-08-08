@@ -7,12 +7,12 @@ import {
 } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import DetailCard from '../detail';
-import * as api from '../api/api';
-import type { SimplifiedPokemon } from '../api/type';
+import DetailCard from '@/page/Detail';
+import * as api from '@/api/Api';
+import type { SimplifiedPokemon } from '@/api/Type';
 import type { JSX } from 'react/jsx-runtime';
 
-vi.mock('../api/api', () => ({
+vi.mock('@/api/Api', () => ({
   fetchPokemonDetails: vi.fn(),
 }));
 

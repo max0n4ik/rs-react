@@ -1,9 +1,9 @@
-import { API } from '../utils/constants';
+import { API } from '@/utils/Constants';
 import type {
   NamedAPIResourceList,
   PokemonDetails,
   SimplifiedPokemon,
-} from './type';
+} from '@/api/Type';
 
 export async function fetchPokemon(
   term: string

@@ -1,7 +1,7 @@
 import { useContext, type KeyboardEvent } from 'react';
-import useLocalStorage from './hooks/useLocalStorage';
+import useLocalStorage from '@/hooks/UseLocalStorage';
 import { useSearchParams } from 'react-router';
-import { ThemeContext } from './store/context-store';
+import { ThemeContext } from '@/store/ContextStore';
 
 type Props = {
   onSearch: (term: string) => void;

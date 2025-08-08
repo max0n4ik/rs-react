@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import { useSelector } from 'react-redux';
-import Flyout from '../flyout';
-import { downloadCSV } from '../utils/csv-downloader';
+import Flyout from '@/components/Flyout';
+import { downloadCSV } from '@/utils/CsvDownloader';
 import '@testing-library/jest-dom';
 import { act } from 'react';
 
@@ -10,7 +10,7 @@ vi.mock('react-redux', () => ({
   useSelector: vi.fn(),
 }));
 
-vi.mock('../utils/csv-downloader', () => ({
+vi.mock('@/utils/CsvDownloader', () => ({
   downloadCSV: vi.fn(),
 }));
 

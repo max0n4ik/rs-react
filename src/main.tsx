@@ -1,14 +1,14 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from './app';
+import { App } from '@/page/App';
 import { BrowserRouter, Routes, Route } from 'react-router';
-import { ErrorBoundary } from './error-boundary';
-import About from './about';
-import NotFound from './404';
-import DetailCard from './detail';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import About from '@/page/About';
+import NotFound from '@/page/NotFound';
+import DetailCard from '@/page/Detail';
 import { Provider } from 'react-redux';
-import { store } from './store/store';
-import { ThemeProvider } from './theme-provider';
+import { store } from '@/store/Store';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const rootElement =
   document.querySelector('#root') ??

@@ -1,5 +1,5 @@
-import type { SimplifiedPokemon } from '../api/type';
-import { fetchPokemonDetails } from '../api/api';
+import type { SimplifiedPokemon } from '@/api/Type';
+import { fetchPokemonDetails } from '@/api/Api';
 
 type CardProps = {
   id: number;

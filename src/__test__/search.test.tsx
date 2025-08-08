@@ -1,10 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import Search from '../search';
-import * as api from '../api/api';
-import type { SimplifiedPokemon } from '../api/type';
+import Search from '@/components/Search';
+import * as api from '@/api/Api';
+import type { SimplifiedPokemon } from '@/api/Type';
 import { BrowserRouter } from 'react-router';
 
-vi.mock('../api/api', () => ({
+vi.mock('@/api/Api', () => ({
   fetchPokemon: vi.fn(),
 }));
 

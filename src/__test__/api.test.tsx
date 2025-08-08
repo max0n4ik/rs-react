@@ -1,6 +1,6 @@
-import { fetchPokemon } from '../api/api';
-import { API } from '../utils/constants';
-import type { NamedAPIResourceList } from '../api/type';
+import { fetchPokemon } from '@/api/Api';
+import { API } from '@/utils/Constants';
+import type { NamedAPIResourceList } from '@/api/Type';
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;

@@ -3,9 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { configureStore } from '@reduxjs/toolkit';
-import Card from '../card';
-import type { RootState } from '../store/store';
-import { cardSlice } from '../store/card-slice';
+import Card from '@/components/Card';
+import type { RootState } from '@/store/Store';
+import { cardSlice } from '@/store/CardSlice';
 
 const createTestStore = (preloadedState?: Partial<RootState>) => {
   return configureStore({

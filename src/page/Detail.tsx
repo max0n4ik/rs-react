@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { fetchPokemonDetails } from './api/api';
-import type { SimplifiedPokemon } from './api/type';
-import { API, typeColors } from './utils/constants';
+import { fetchPokemonDetails } from '@/api/Api';
+import type { SimplifiedPokemon } from '@/api/Type';
+import { API, typeColors } from '@/utils/Constants';
 import classNames from 'classnames';
 
 export default function DetailCard() {

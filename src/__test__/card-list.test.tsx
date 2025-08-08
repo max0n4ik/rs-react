@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import CardList from '../card-list';
+import CardList from '@/components/CardList';
 import '@testing-library/jest-dom';
-import type { SimplifiedPokemon } from '../api/type';
+import type { SimplifiedPokemon } from '@/api/Type';
 import { BrowserRouter } from 'react-router';
 import type { JSX } from 'react';
 import { Provider } from 'react-redux';
-import { store } from '../store/store';
+import { store } from '@/store/Store';
 
 const mockItems = [
   { name: 'Pikachu', id: 25, image: 'pikachu.png' },

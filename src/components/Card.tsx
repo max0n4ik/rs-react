@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router';
-import { addCard, removeCard } from './store/card-slice';
-import type { RootState } from './store/store';
+import { addCard, removeCard } from '@/store/CardSlice';
+import type { RootState } from '@/store/Store';
 
 type Props = {
   id: number;

@@ -4,6 +4,7 @@ import { ThemeContext } from '@/store/ContextStore';
 import useLocalStorage from '@/hooks/UseLocalStorage';
 import { useRootDispatch } from '@/store/store';
 import { setSearchTerm } from '@/store/SearchSlice';
+import { pokemonApi } from '@/api/api';
 
 export default function Search() {
   const dispatch = useRootDispatch();
@@ -28,22 +29,37 @@ export default function Search() {
     }
   };
 
+  const handleResetCache = () => {
+    setSearchState('');
+    searchParams.delete('page');
+    setSearchParams(searchParams);
+    dispatch(setSearchTerm(''));
+    localStorage.removeItem('searchState');
+
+    dispatch(pokemonApi.util.resetApiState());
+  };
+
   {
     return (
       <div className="flex justify-center  flex-col mb-8">
         <h1 className="text-center text-3xl mb-5">Pokewiki</h1>
-        <div className="flex relative rounded-md w-full px-4 max-w-xl mx-auto">
+        <div className="flex relative rounded-md w-full px-4 max-w-3xl mx-auto">
           <button
             className="border-2 mr-9 p-3 rounded-md border-gray-300 dark:border-gray-100 dark:bg-black dark:text-white"
             onClick={toggleTheme}>
             {theme}
+          </button>
+          <button
+            className="border-2 mr-9 p-3 rounded-md border-gray-300 dark:border-gray-100 dark:bg-black dark:text-white"
+            onClick={handleResetCache}>
+            Reset Cache
           </button>
           <input
             id="search"
             value={searchState}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            className="w-full p-3 rounded-md border-2 border-r-white rounded-r-none border-gray-300 placeholder-gray-500 dark:text-white"
+            className="w-full max-w-xl p-3 rounded-md border-2 border-r-white rounded-r-none border-gray-300 placeholder-gray-500 dark:text-white"
             type="text"
           />
           <button

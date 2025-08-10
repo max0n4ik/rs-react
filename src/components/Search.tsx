@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router';
 import { ThemeContext } from '@/store/ContextStore';
 import useLocalStorage from '@/hooks/UseLocalStorage';
 import { useRootDispatch } from '@/store/store';
-import { setSearchTerm } from '@/store/searchSlice';
+import { setSearchTerm } from '@/store/SearchSlice';
 
 export default function Search() {
   const dispatch = useRootDispatch();

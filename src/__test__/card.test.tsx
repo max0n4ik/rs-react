@@ -4,13 +4,17 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { configureStore } from '@reduxjs/toolkit';
 import Card from '@/components/Card';
-import type { RootState } from '@/store/Store';
-import { cardSlice } from '@/store/CardSlice';
+import type { RootState } from '@/store/store';
+import cardReducer from '@/store/CardSlice.ts';
+import searchReducer from '@/store/SearchSlice';
+import { pokemonApi } from '@/api/api';
 
 const createTestStore = (preloadedState?: Partial<RootState>) => {
   return configureStore({
     reducer: {
-      card: cardSlice.reducer,
+      card: cardReducer,
+      search: searchReducer,
+      [pokemonApi.reducerPath]: pokemonApi.reducer,
     },
     preloadedState: preloadedState as RootState | undefined,
   });
@@ -30,7 +34,7 @@ const renderWithProviders = (component: React.ReactElement, preloadedState?: Par
 
 const mockLocation = { search: '' };
 vi.mock('react-router', async () => {
-  const actual = await vi.importActual('react-router');
+  const actual = await vi.importActual<Record<string, unknown>>('react-router');
   return {
     ...actual,
     useLocation: () => mockLocation,
@@ -52,15 +56,15 @@ describe('Card Component', () => {
     renderWithProviders(<Card {...mockProps} />);
 
     expect(screen.getByRole('heading', { name: /pikachu/i })).toBeInTheDocument();
-    expect(screen.getByRole('presentation')).toHaveAttribute('src', mockProps.image);
+    expect(screen.getByRole('img')).toHaveAttribute('src', mockProps.image);
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
   });
 
   it('renders without image when image prop is not provided', () => {
-    const propsWithoutImage = { id: 1, name: 'pikachu' };
+    const propsWithoutImage = { id: 1, name: 'pikachu', image: '' };
     renderWithProviders(<Card {...propsWithoutImage} />);
 
-    expect(screen.getByRole('presentation')).not.toHaveAttribute('src');
+    expect(screen.getByRole('img')).not.toHaveAttribute('src');
   });
 
   it('creates correct link to detail page', () => {
@@ -229,7 +233,7 @@ describe('Card Component', () => {
   });
 
   it('works correctly with pokemon without image', () => {
-    const propsWithoutImage = { id: 3, name: 'bulbasaur' };
+    const propsWithoutImage = { id: 3, name: 'bulbasaur', image: '' };
     const { store } = renderWithProviders(<Card {...propsWithoutImage} />);
 
     const checkbox = screen.getByRole('checkbox');
@@ -240,7 +244,7 @@ describe('Card Component', () => {
     expect(state.card.selectedPokemons[0]).toEqual({
       id: 3,
       name: 'bulbasaur',
-      image: undefined,
+      image: '',
     });
   });
 

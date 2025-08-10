@@ -1,13 +1,31 @@
-import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import DetailCard from '@/page/Detail';
-import * as api from '@/api/Api';
-import type { SimplifiedPokemon } from '@/api/Type';
-import type { JSX } from 'react/jsx-runtime';
+import { useGetPokemonDetailsQuery } from '@/api/api';
+import type { DetailedPokemon } from '@/api/Type';
 
-vi.mock('@/api/Api', () => ({
-  fetchPokemonDetails: vi.fn(),
+type MockQueryResult = {
+  data: DetailedPokemon | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+  refetch: () => void;
+};
+
+type MockMiddleware = (next: (action: unknown) => unknown) => (action: unknown) => unknown;
+
+vi.mock('@/api/api', () => ({
+  pokemonApi: {
+    reducerPath: 'pokemonApi',
+    reducer: vi.fn(() => ({})),
+    middleware: vi.fn(
+      () => ((next: (action: unknown) => unknown) => (action: unknown) => next(action)) as MockMiddleware
+    ),
+  },
+  useGetPokemonDetailsQuery: vi.fn(),
 }));
 
 vi.mock('react-router', async (importOriginal) => {
@@ -19,12 +37,13 @@ vi.mock('react-router', async (importOriginal) => {
     useLocation: vi.fn(),
   };
 });
+
 const mockNavigate = vi.fn();
 
-const mockPokemonData = {
+export const mockPokemonData: DetailedPokemon = {
   id: 1,
   name: 'bulbasaur',
-  image: 'https://example.com/bulbasaur.png',
+  image: 'https://example.com/bulbasaur.png  ',
   types: ['grass', 'poison'],
   abilities: [
     { name: 'overgrow', isHidden: false },
@@ -49,19 +68,31 @@ const mockPokemonData = {
   color: 'green',
   shape: 'quadruped',
   baseFriendship: 70,
-  footprint: 'https://example.com/footprint.png',
-} as SimplifiedPokemon;
+  footprint: 'https://example.com/footprint.png  ',
+};
 
-const mockPokemonDataGenderless = {
+const mockPokemonDataGenderless: DetailedPokemon = {
   ...mockPokemonData,
   genderRatio: null,
-} as SimplifiedPokemon;
+};
+
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      pokemonApi: () => ({}),
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+  });
+};
 
 const renderComponent = () => {
+  const store = createMockStore();
   return render(
-    <BrowserRouter>
-      <DetailCard />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <DetailCard />
+      </BrowserRouter>
+    </Provider>
   );
 };
 
@@ -69,6 +100,7 @@ describe('DetailCard', async () => {
   const mockUseParams = vi.mocked((await import('react-router')).useParams);
   const mockUseNavigate = vi.mocked((await import('react-router')).useNavigate);
   const mockUseLocation = vi.mocked((await import('react-router')).useLocation);
+  const mockUseGetPokemonDetailsQuery = vi.mocked(useGetPokemonDetailsQuery);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -84,16 +116,28 @@ describe('DetailCard', async () => {
   });
 
   it('renders loading state initially', () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockReturnValue(new Promise(() => {}));
+    mockUseGetPokemonDetailsQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: undefined,
+      refetch: vi.fn(),
+    } satisfies MockQueryResult);
 
     renderComponent();
 
     expect(screen.getByRole('status')).toBeInTheDocument();
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getAllByText('Loading...')).toHaveLength(2);
   });
 
   it('renders pokemon data after loading', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
+    mockUseGetPokemonDetailsQuery.mockReturnValue({
+      data: mockPokemonData,
+      isLoading: false,
+      isError: false,
+      error: undefined,
+      refetch: vi.fn(),
+    } satisfies MockQueryResult);
 
     renderComponent();
 
@@ -108,7 +152,6 @@ describe('DetailCard', async () => {
     expect(screen.getByText('chlorophyll (Hidden Ability)')).toBeInTheDocument();
     expect(screen.getByText('87.5% male, 12.5% female')).toBeInTheDocument();
     expect(screen.getByText('45')).toBeInTheDocument();
-
     expect(screen.getByText('0.7 m')).toBeInTheDocument();
     expect(screen.getByText('6.9 kg')).toBeInTheDocument();
     expect(screen.getByText('64')).toBeInTheDocument();
@@ -118,7 +161,13 @@ describe('DetailCard', async () => {
   });
 
   it('renders genderless pokemon correctly', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonDataGenderless);
+    mockUseGetPokemonDetailsQuery.mockReturnValue({
+      data: mockPokemonDataGenderless,
+      isLoading: false,
+      isError: false,
+      error: undefined,
+      refetch: vi.fn(),
+    } satisfies MockQueryResult);
 
     renderComponent();
 
@@ -128,7 +177,13 @@ describe('DetailCard', async () => {
   });
 
   it('calls navigate when close button is clicked', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
+    mockUseGetPokemonDetailsQuery.mockReturnValue({
+      data: mockPokemonData,
+      isLoading: false,
+      isError: false,
+      error: undefined,
+      refetch: vi.fn(),
+    } satisfies MockQueryResult);
 
     renderComponent();
 
@@ -142,55 +197,32 @@ describe('DetailCard', async () => {
     expect(mockNavigate).toHaveBeenCalledWith('..?page=1', { replace: true });
   });
 
-  it('fetches pokemon details with correct API URL', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
-
-    await act(async () => {
-      renderComponent();
-    });
-
-    expect(api.fetchPokemonDetails).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/1');
-  });
-
-  it('refetches data when params.id changes', async () => {
-    const spy = vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
-
-    let rerender: (arg0: JSX.Element) => void;
-    await act(async () => {
-      ({ rerender } = renderComponent());
-    });
-
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/1');
-
-    mockUseParams.mockReturnValue({ id: '2' });
-
-    await act(async () => {
-      rerender(
-        <BrowserRouter>
-          <DetailCard />
-        </BrowserRouter>
-      );
-    });
-
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenLastCalledWith('https://pokeapi.co/api/v2/pokemon/2');
-  });
-
   it('renders image with correct src and alt', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
+    mockUseGetPokemonDetailsQuery.mockReturnValue({
+      data: mockPokemonData,
+      isLoading: false,
+      isError: false,
+      error: undefined,
+      refetch: vi.fn(),
+    } satisfies MockQueryResult);
 
     renderComponent();
 
     await waitFor(() => {
       const image = screen.getByRole('img');
-      expect(image).toHaveAttribute('src', 'https://example.com/bulbasaur.png');
+      expect(image).toHaveAttribute('src', 'https://example.com/bulbasaur.png  ');
       expect(image).toHaveAttribute('alt', 'Bulbasaur');
     });
   });
 
   it('renders abilities with correct styling for hidden abilities', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
+    mockUseGetPokemonDetailsQuery.mockReturnValue({
+      data: mockPokemonData,
+      isLoading: false,
+      isError: false,
+      error: undefined,
+      refetch: vi.fn(),
+    } satisfies MockQueryResult);
 
     renderComponent();
 
@@ -204,7 +236,13 @@ describe('DetailCard', async () => {
   });
 
   it('renders EV yield correctly when some values are 0', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
+    mockUseGetPokemonDetailsQuery.mockReturnValue({
+      data: mockPokemonData,
+      isLoading: false,
+      isError: false,
+      error: undefined,
+      refetch: vi.fn(),
+    } satisfies MockQueryResult);
 
     renderComponent();
 
@@ -213,5 +251,22 @@ describe('DetailCard', async () => {
       expect(screen.getByText('0 attack')).toBeInTheDocument();
       expect(screen.getByText('1 special-defense')).toBeInTheDocument();
     });
+  });
+
+  it('renders error state correctly', () => {
+    const errorResult = {
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: { status: 'FETCH_ERROR', error: 'Failed to fetch' },
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useGetPokemonDetailsQuery>;
+
+    mockUseGetPokemonDetailsQuery.mockReturnValue(errorResult);
+
+    renderComponent();
+
+    expect(screen.getByText('Ups')).toBeInTheDocument();
+    expect(screen.getByText('Error with fetching')).toBeInTheDocument();
   });
 });

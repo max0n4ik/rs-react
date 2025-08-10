@@ -7,7 +7,7 @@ import About from '@/page/About';
 import NotFound from '@/page/NotFound';
 import DetailCard from '@/page/Detail';
 import { Provider } from 'react-redux';
-import { store } from '@/store/Store';
+import { store } from '@/store/store';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 const rootElement =

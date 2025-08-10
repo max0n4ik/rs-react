@@ -1,132 +1,83 @@
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Search from '@/components/Search';
-import * as api from '@/api/Api';
-import type { SimplifiedPokemon } from '@/api/Type';
-import { BrowserRouter } from 'react-router';
+import { ThemeContext } from '@/store/ContextStore';
+import * as searchSlice from '@/store/SearchSlice';
+import '@testing-library/jest-dom';
 
-vi.mock('@/api/Api', () => ({
-  fetchPokemon: vi.fn(),
+const mockDispatch = vi.fn();
+const mockSetSearchState = vi.fn();
+const mockSetSearchParams = vi.fn();
+const mockToggleTheme = vi.fn();
+
+vi.mock('@/hooks/UseLocalStorage', () => ({
+  default: () => ['test-value', mockSetSearchState],
 }));
 
-const mockData = [
-  {
-    name: 'Pikachu',
-    image: 'pikachu.png',
-  } as SimplifiedPokemon,
-];
+vi.mock('@/store/store', () => ({
+  useRootDispatch: () => mockDispatch,
+}));
+
+vi.mock('react-router', () => ({
+  useSearchParams: () => [new URLSearchParams(), mockSetSearchParams],
+}));
+
+vi.mock('@/store/searchSlice', () => ({
+  setSearchTerm: vi.fn((term) => ({ type: 'search/setSearchTerm', payload: term })),
+}));
 
 describe('Search Component', () => {
-  beforeEach(() => {
-    localStorage.clear();
-    vi.clearAllMocks();
-  });
-
-  it('renders search input and search button', () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
+  const renderComponent = (theme = 'light') => {
+    return render(
+      <ThemeContext.Provider value={{ theme, toggleTheme: mockToggleTheme }}>
+        <Search />
+      </ThemeContext.Provider>
     );
+  };
+
+  it('should render correctly', () => {
+    renderComponent();
+    expect(screen.getByText('Pokewiki')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'light' })).toBeInTheDocument();
   });
 
-  it('displays previously saved search term from localStorage on mount', () => {
-    localStorage.setItem('searchState', 'pikachu');
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    expect(screen.getByRole('textbox')).toHaveValue('pikachu');
+  it('should display the value from useLocalStorage', () => {
+    renderComponent();
+    const searchInput = screen.getByRole('textbox');
+    expect(searchInput).toHaveValue('test-value');
   });
 
-  it('shows empty input when no saved term exists', () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    expect(screen.getByRole('textbox')).toHaveValue('');
+  it('should call setSearchState on input change', () => {
+    renderComponent();
+    const searchInput = screen.getByRole('textbox');
+    fireEvent.change(searchInput, { target: { value: 'pikachu' } });
+    expect(mockSetSearchState).toHaveBeenCalledWith('pikachu');
   });
 
-  it('updates input value when user types', () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: 'bulbasaur' } });
-    expect(input).toHaveValue('bulbasaur');
+  it('should call handleSearch and its dependencies on button click', () => {
+    renderComponent();
+    const searchButton = screen.getByRole('button', { name: 'Search' });
+    fireEvent.click(searchButton);
+    expect(mockSetSearchParams).toHaveBeenCalledTimes(1);
+    expect(mockSetSearchState).toHaveBeenCalledWith('test-value');
+    expect(mockDispatch).toHaveBeenCalledWith(searchSlice.setSearchTerm('test-value'));
   });
 
-  it('saves search term to localStorage when search button is clicked', () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: ' charmander ' } });
-    fireEvent.click(screen.getByRole('button', { name: /search/i }));
-    expect(localStorage.getItem('searchState')).toBe('charmander');
+  it('should call handleSearch on Enter key press', () => {
+    renderComponent();
+    const searchInput = screen.getByRole('textbox');
+    fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
+    expect(mockSetSearchParams).toHaveBeenCalledTimes(2);
+    expect(mockSetSearchState).toHaveBeenCalledWith('test-value');
+    expect(mockDispatch).toHaveBeenCalledWith(searchSlice.setSearchTerm('test-value'));
   });
 
-  it('trims whitespace from search input before saving', () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: '   squirtle   ' } });
-    fireEvent.click(screen.getByRole('button', { name: /search/i }));
-    expect(localStorage.getItem('searchState')).toBe('squirtle');
-  });
-
-  it('triggers search callback with correct parameters', () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: ' eevee ' } });
-    fireEvent.click(screen.getByRole('button', { name: /search/i }));
-    expect(api.fetchPokemon).toHaveBeenCalledWith('eevee');
-  });
-
-  it('retrieves saved search term on component mount', () => {
-    localStorage.setItem('searchState', 'gengar');
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    expect(screen.getByRole('textbox')).toHaveValue('gengar');
-  });
-
-  it('overwrites existing localStorage value when new search is performed', () => {
-    localStorage.setItem('searchState', 'oldterm');
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-    fireEvent.change(screen.getByRole('textbox'), {
-      target: { value: 'newterm' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /search/i }));
-    expect(localStorage.getItem('searchState')).toBe('newterm');
+  it('should call toggleTheme on theme button click', () => {
+    renderComponent();
+    const themeButton = screen.getByRole('button', { name: 'light' });
+    fireEvent.click(themeButton);
+    expect(mockToggleTheme).toHaveBeenCalledTimes(1);
   });
 });

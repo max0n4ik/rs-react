@@ -1,17 +1,19 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import { useSelector } from 'react-redux';
 import Flyout from '@/components/Flyout';
-import { downloadCSV } from '@/utils/CsvDownloader';
 import '@testing-library/jest-dom';
 import { act } from 'react';
 
-vi.mock('react-redux', () => ({
-  useSelector: vi.fn(),
+// Mock typed selector hook and RTK Query hook used inside Flyout
+const mockUseRootSelector = vi.fn();
+const mockUseGenerateCSVDownloadQuery = vi.fn();
+
+vi.mock('@/store/store', () => ({
+  useRootSelector: (...args: unknown[]) => mockUseRootSelector(...args),
 }));
 
-vi.mock('@/utils/CsvDownloader', () => ({
-  downloadCSV: vi.fn(),
+vi.mock('@/api/api', () => ({
+  useGenerateCSVDownloadQuery: (...args: unknown[]) => mockUseGenerateCSVDownloadQuery(...args),
 }));
 
 const mockPokemons = [
@@ -22,7 +24,11 @@ const mockPokemons = [
 const mockOnUnselectAll = vi.fn();
 
 const renderFlyout = (selectedCount: number) => {
-  vi.mocked(useSelector).mockReturnValue(selectedCount > 0 ? mockPokemons : []);
+  mockUseRootSelector.mockReturnValue(selectedCount > 0 ? mockPokemons : []);
+  mockUseGenerateCSVDownloadQuery.mockReturnValue({
+    data: selectedCount > 0 ? 'mock-download-url' : undefined,
+    isLoading: false,
+  });
   return render(<Flyout selectedCount={selectedCount} onUnselectAll={mockOnUnselectAll} />);
 };
 
@@ -40,10 +46,6 @@ describe('Flyout Component', () => {
     } else {
       vi.spyOn(window.URL, 'revokeObjectURL').mockImplementation(() => {});
     }
-
-    vi.spyOn(Blob.prototype, 'size', 'get').mockReturnValue(1234);
-
-    vi.mocked(downloadCSV).mockResolvedValue('id,name\n1,Bulbasaur\n4,Charmander');
   });
 
   it('should display the correct number of selected items', async () => {
@@ -75,8 +77,8 @@ describe('Flyout Component', () => {
   it('should prepare a CSV file for download when pokemons are selected', async () => {
     renderFlyout(2);
     await waitFor(() => {
-      expect(downloadCSV).toHaveBeenCalledWith(mockPokemons);
-      expect(URL.createObjectURL).toHaveBeenCalled();
+      // Hook provides a ready-to-use URL for download
+      expect(mockUseGenerateCSVDownloadQuery).toHaveBeenCalled();
     });
     const downloadLink = screen.getByRole('link', { name: /download/i });
     expect(downloadLink).toHaveAttribute('href', 'mock-download-url');
@@ -85,15 +87,15 @@ describe('Flyout Component', () => {
 
   it('should not prepare a CSV file if no pokemons are selected', () => {
     renderFlyout(0);
-    expect(downloadCSV).not.toHaveBeenCalled();
     expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
 
   it('should revoke the object URL upon component unmount', async () => {
     const { unmount } = renderFlyout(1);
-    await waitFor(() => {
-      expect(URL.createObjectURL).toHaveBeenCalled();
-    });
+    // Wait until the download link is populated
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: /download/i })).toHaveAttribute('href', 'mock-download-url')
+    );
     unmount();
     expect(URL.revokeObjectURL).toHaveBeenCalledWith('mock-download-url');
   });

@@ -6,7 +6,10 @@ type PaginationProps = {
 export default function Pagination({ currentPage, onChange }: PaginationProps) {
   return (
     <div className="flex justify-center items-center gap-2 w-full dark:text-white ">
-      <button className="p-2 border rounded-xl cursor-pointer " onClick={() => onChange(currentPage - 1)}>
+      <button
+        className="p-2 border rounded-xl cursor-pointer "
+        aria-label="Previous Page"
+        onClick={() => onChange(currentPage - 1)}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -22,7 +25,10 @@ export default function Pagination({ currentPage, onChange }: PaginationProps) {
         </svg>
       </button>
       <p className="p-2 px-4 border rounded-xl">{currentPage}</p>
-      <button className="p-2 border rounded-xl cursor-pointer" onClick={() => onChange(currentPage + 1)}>
+      <button
+        className="p-2 border rounded-xl cursor-pointer"
+        aria-label="Next Page"
+        onClick={() => onChange(currentPage + 1)}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

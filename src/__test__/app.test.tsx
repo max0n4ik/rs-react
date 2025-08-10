@@ -1,109 +1,141 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { App } from '@/page/App';
-
-import * as api from '@/api/Api';
-import type { SimplifiedPokemon } from '@/api/Type';
-import Search from '@/components/Search';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
-import { store } from '@/store/Store';
-import { type JSX } from 'react';
+import { configureStore } from '@reduxjs/toolkit';
+import { pokemonApi } from '@/api/api';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
+import cardReducer from '@/store/CardSlice.ts';
+import searchReducer from '@/store/SearchSlice';
+import { App } from '@/page/App';
 
-vi.mock('@/api/Api', () => ({
-  fetchPokemon: vi.fn(),
-  fetchPokemonDetails: vi.fn(),
-}));
+// Spy to control RTK Query hook behaviour
+const mockUseGetPokemonQuery = vi.fn();
 
-const renderWithRouter = (component: JSX.Element) => {
+// Mock API: forward args to the spy so we can assert call params
+vi.mock('@/api/api', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    useGetPokemonQuery: (args: unknown) => mockUseGetPokemonQuery(args),
+  };
+});
+
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    useParams: vi.fn(),
+    useNavigate: vi.fn(),
+    useLocation: vi.fn(),
+  };
+});
+
+// Mock data for a successful API response
+const mockPokemonListData = [
+  { id: 1, name: 'bulbasaur', image: '' },
+  { id: 2, name: 'charmander', image: '' },
+];
+
+const createMockStore = () =>
+  configureStore({
+    reducer: {
+      [pokemonApi.reducerPath]: pokemonApi.reducer,
+      card: cardReducer,
+      search: searchReducer,
+    },
+    middleware: (gdm) => gdm().concat(pokemonApi.middleware),
+  });
+
+const renderComponent = () => {
+  const store = createMockStore();
   return render(
-    <BrowserRouter>
-      <Provider store={store}>{component}</Provider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   );
 };
 
-const mockData = [
-  {
-    name: 'Pikachu',
-    image: 'pikachu.png',
-  } as SimplifiedPokemon,
-];
+describe('App Component Integration Tests', async () => {
+  const mockedUseNavigate = vi.mocked((await import('react-router')).useNavigate);
+  const mockedUseLocation = vi.mocked((await import('react-router')).useLocation);
 
-describe('App Component Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
+    mockedUseNavigate.mockReturnValue(vi.fn());
+    mockedUseLocation.mockReturnValue({
+      search: '',
+      state: undefined,
+      key: 'default-key',
+      pathname: '/',
+      hash: '',
+    });
+    // Default hook return to avoid destructuring errors
+    mockUseGetPokemonQuery.mockReturnValue({ data: mockPokemonListData, isLoading: false, error: undefined });
   });
 
-  it('Initialization call API ', async () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-
-    renderWithRouter(<App />);
-    await waitFor(() => {
-      expect(api.fetchPokemon).toHaveBeenCalledWith('');
+  it('renders loading state initially', () => {
+    // Mock the hook to return the loading state
+    mockUseGetPokemonQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: undefined,
     });
+
+    renderComponent();
+
+    // Spinner has an sr-only text
+    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
   });
 
-  it('use localStorage for first search', async () => {
-    localStorage.setItem('searchState', 'Pikachu');
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
+  it('renders pokemon list on successful data fetch', async () => {
+    // Mock the hook to return successful data
+    mockUseGetPokemonQuery.mockReturnValue({
+      data: mockPokemonListData,
+      isLoading: false,
+      error: undefined,
+    });
 
-    renderWithRouter(<App />);
+    renderComponent();
+
+    // Wait for the data to be rendered
     await waitFor(() => {
-      expect(api.fetchPokemon).toHaveBeenCalledWith('Pikachu');
-    });
-  });
-
-  it('render loading indicator', async () => {
-    let resolvePromise: (value: SimplifiedPokemon[]) => void = () => {};
-    const pendingPromise = new Promise<SimplifiedPokemon[]>((resolve) => {
-      resolvePromise = resolve;
-    });
-
-    vi.spyOn(api, 'fetchPokemon').mockReturnValueOnce(pendingPromise);
-
-    renderWithRouter(<App />);
-    expect(screen.getByRole('status')).toBeInTheDocument();
-
-    resolvePromise(mockData);
-    await waitFor(() => {
-      expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    });
-  });
-
-  it('calls the API with the correct parameters when searching', async () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-
-    render(
-      <BrowserRouter>
-        <Search onSearch={api.fetchPokemon} />
-      </BrowserRouter>
-    );
-
-    fireEvent.change(screen.getByRole('textbox'), {
-      target: { value: 'bulbasaur' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /search/i }));
-
-    await waitFor(() => {
-      expect(api.fetchPokemon).toHaveBeenCalledWith('bulbasaur');
+      expect(screen.getByText('bulbasaur')).toBeInTheDocument();
+      expect(screen.getByText('charmander')).toBeInTheDocument();
     });
   });
 
-  it('processes the successful API response and displays the cards', async () => {
-    vi.spyOn(api, 'fetchPokemon').mockResolvedValueOnce(mockData);
-    renderWithRouter(<App />);
+  it('displays an error message when the API fails', async () => {
+    mockUseGetPokemonQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: { status: 404, data: 'Not Found' },
+    });
+
+    renderComponent();
+
     await waitFor(() => {
-      expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
+      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
     });
   });
 
-  it('displays an error message in case of API failure', async () => {
-    vi.spyOn(api, 'fetchPokemon').mockRejectedValueOnce(new Error('Server unavailable'));
+  it('calls the API with the correct parameters when the search button is clicked', async () => {
+    mockUseGetPokemonQuery.mockReturnValue({ data: mockPokemonListData, isLoading: false, error: undefined });
 
-    renderWithRouter(<App />);
+    renderComponent();
+
+    const searchInput = screen.getByRole('textbox');
+    const searchButton = screen.getByRole('button', { name: /search/i });
+
+    fireEvent.change(searchInput, { target: { value: 'pikachu' } });
+    fireEvent.click(searchButton);
+
     await waitFor(() => {
-      expect(screen.getByText(/error: server unavailable/i)).toBeInTheDocument();
+      // Last call should be with the updated search term and page 1 => offset 0
+      const lastCallArgs = mockUseGetPokemonQuery.mock.calls.at(-1)?.[0] as { name: string; offset: number };
+      expect(lastCallArgs).toMatchObject({ name: 'pikachu', offset: 0 });
     });
   });
 });

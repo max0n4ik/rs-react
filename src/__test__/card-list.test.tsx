@@ -56,9 +56,6 @@ describe('CardList Component', () => {
 
     const pikachuLink = screen.getByRole('link', { name: /Pikachu/i });
 
-    expect(pikachuLink).toHaveAttribute(
-      'href',
-      expect.stringContaining('/detail/25')
-    );
+    expect(pikachuLink).toHaveAttribute('href', expect.stringContaining('/detail/25'));
   });
 });

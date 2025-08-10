@@ -1,36 +1,33 @@
-import { useContext, type KeyboardEvent } from 'react';
-import useLocalStorage from '@/hooks/UseLocalStorage';
+import { useContext } from 'react';
 import { useSearchParams } from 'react-router';
 import { ThemeContext } from '@/store/ContextStore';
+import useLocalStorage from '@/hooks/UseLocalStorage';
+import { useRootDispatch } from '@/store/store';
+import { setSearchTerm } from '@/store/searchSlice';
 
-type Props = {
-  onSearch: (term: string) => void;
-};
-
-export default function Search(prop: Props) {
+export default function Search() {
+  const dispatch = useRootDispatch();
+  const [searchState, setSearchState] = useLocalStorage<string>('searchState', '');
   const [searchParams, setSearchParams] = useSearchParams();
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const [searchState, setSearchState] = useLocalStorage<string>(
-    'searchState',
-    ''
-  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchState(e.target.value);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearchClick();
-    }
-  };
-
-  const handleSearchClick = () => {
+  const handleSearch = () => {
     searchParams.set('page', String(1));
     setSearchParams(searchParams);
     setSearchState(searchState.trim());
-    prop.onSearch(searchState.trim());
+    dispatch(setSearchTerm(searchState.trim()));
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   {
     return (
       <div className="flex justify-center  flex-col mb-8">
@@ -38,8 +35,7 @@ export default function Search(prop: Props) {
         <div className="flex relative rounded-md w-full px-4 max-w-xl mx-auto">
           <button
             className="border-2 mr-9 p-3 rounded-md border-gray-300 dark:border-gray-100 dark:bg-black dark:text-white"
-            onClick={toggleTheme}
-          >
+            onClick={toggleTheme}>
             {theme}
           </button>
           <input
@@ -51,9 +47,8 @@ export default function Search(prop: Props) {
             type="text"
           />
           <button
-            onClick={handleSearchClick}
-            className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-r-md"
-          >
+            onClick={handleSearch}
+            className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-r-md">
             <span>Search</span>
           </button>
         </div>

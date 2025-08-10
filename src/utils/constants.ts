@@ -1,7 +1,7 @@
 export const API = {
   API_URL: 'https://pokeapi.co/api/v2/pokemon/',
 } as const;
-
+export const ITEMS_PER_PAGE = 9;
 export const typeColors: Record<string, string> = {
   normal: 'bg-gray-400',
   fire: 'bg-red-500',

@@ -32,8 +32,7 @@ createRoot(rootElement).render(
                   <App />
                 </ThemeProvider>
               </Provider>
-            }
-          >
+            }>
             <Route
               path="detail/:id"
               element={

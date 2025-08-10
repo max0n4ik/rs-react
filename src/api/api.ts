@@ -1,90 +1,43 @@
-import { API } from '@/utils/Constants';
-import type {
-  NamedAPIResourceList,
-  PokemonDetails,
-  SimplifiedPokemon,
-} from '@/api/Type';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { API, ITEMS_PER_PAGE } from '@/utils/Constants';
+import type { NamedAPIResourceList, Pokemon, PokemonCard } from './Type';
 
-export async function fetchPokemon(
-  term: string
-): Promise<Pick<SimplifiedPokemon, 'name' | 'image' | 'id'>[]> {
-  const trimmed = term.trim().toLowerCase();
-
-  if (trimmed === '') {
-    const res = await fetch(`${API.API_URL}?limit=50`);
-    if (!res.ok) throw new Error(`Error: ${res.status}`);
-    const data: NamedAPIResourceList = await res.json();
-
-    const detailed = await Promise.all(
-      data.results.map((p) => fetchPokemonDetails(p.url))
-    );
-
-    return detailed;
-  } else {
-    const res = await fetch(`${API.API_URL}/${trimmed}`);
-    if (!res.ok) throw new Error(`Pokemon "${trimmed}" not found`);
-
-    const data: PokemonDetails = await res.json();
-    return [
-      {
-        name: data.name,
-        image: data.sprites.front_default,
-        id: data.id,
+export const pokemonApi = createApi({
+  reducerPath: 'pokemonApi',
+  baseQuery: fetchBaseQuery({ baseUrl: API.API_URL }),
+  tagTypes: ['Pokemon'],
+  endpoints: (builder) => ({
+    getPokemon: builder.query<
+      PokemonCard[] | (Pick<NamedAPIResourceList, 'next' | 'previous'> & PokemonCard[]),
+      { name: string; offset: number }
+    >({
+      query: ({ name, offset = 1 }) => `${name}?limit=${ITEMS_PER_PAGE}&offset=${offset}`,
+      transformResponse: (response: NamedAPIResourceList | Pokemon) => {
+        if ('name' in response) {
+          return [
+            {
+              id: response.id,
+              name: response.name,
+              image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${response.id}.png`,
+            },
+          ];
+        }
+        const pokemonCards: PokemonCard[] = response.results.map((item) => {
+          const id = parseInt(item.url.split('/').filter(Boolean).pop() || '0', 10);
+          return {
+            id,
+            name: item.name,
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+          };
+        });
+        return Object.assign(pokemonCards, {
+          next: response.next,
+          previous: response.previous,
+        });
       },
-    ];
-  }
-}
+      providesTags: ['Pokemon'],
+    }),
+  }),
+});
 
-export async function fetchPokemonDetails(
-  url: string
-): Promise<SimplifiedPokemon> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Error: ${res.status}`);
-  const data = await res.json();
-
-  const speciesRes = await fetch(data.species.url);
-  if (!speciesRes.ok) throw new Error(`Error: ${speciesRes.status}`);
-  const speciesData = await speciesRes.json();
-
-  let genderRatio = null;
-  if (speciesData.gender_rate !== -1) {
-    const female = (speciesData.gender_rate / 8) * 100;
-    genderRatio = {
-      male: 100 - female,
-      female,
-    };
-  }
-
-  const evYield: { [stat: string]: number } = {};
-  for (const stat of data.stats) {
-    if (stat.effort > 0) {
-      evYield[stat.stat.name] = stat.effort;
-    }
-  }
-
-  return {
-    id: data.id,
-    name: data.name,
-    image: data.sprites.front_default,
-    types: data.types.map((t: { type: { name: string } }) => t.type.name),
-    abilities: data.abilities.map(
-      (a: { ability: { name: string }; is_hidden: string }) => ({
-        name: a.ability.name,
-        isHidden: a.is_hidden,
-      })
-    ),
-    genderRatio,
-    catchRate: speciesData.capture_rate,
-    eggGroups: speciesData.egg_groups.map((g: { name: string }) => g.name),
-    hatchTime: speciesData.hatch_counter * 255,
-    height: data.height / 10,
-    weight: data.weight / 10,
-    baseExp: data.base_experience,
-    growthRate: speciesData.growth_rate.name,
-    evYield,
-    color: speciesData.color.name,
-    shape: speciesData.shape.name,
-    baseFriendship: speciesData.base_happiness,
-    footprint: speciesData.has_footprint ? speciesData.id.toString() : null,
-  };
-}
+export const { useGetPokemonQuery } = pokemonApi;

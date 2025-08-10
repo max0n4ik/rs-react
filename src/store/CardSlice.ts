@@ -32,9 +32,7 @@ export const cardSlice = createSlice({
     },
     removeCard: (state, action: PayloadAction<RemovePokemonPayload>) => {
       const { id } = action.payload;
-      state.selectedPokemons = state.selectedPokemons.filter(
-        (pokemon) => pokemon.id !== id
-      );
+      state.selectedPokemons = state.selectedPokemons.filter((pokemon) => pokemon.id !== id);
     },
     clearCards: (state) => {
       state.selectedPokemons = [];

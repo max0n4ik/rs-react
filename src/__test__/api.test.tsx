@@ -6,9 +6,7 @@ const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 const mockPokemonListResponse: NamedAPIResourceList = {
-  results: [
-    { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' },
-  ],
+  results: [{ name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/pikachu' }],
   count: 1,
   next: null,
   previous: null,
@@ -23,9 +21,7 @@ const mockPokemonDetails = (name: string) => ({
     url: `https://pokeapi.co/api/v2/pokemon-species/${name}/`,
   },
   types: [{ slot: 1, type: { name: 'electric', url: '' } }],
-  abilities: [
-    { ability: { name: 'static', url: '' }, is_hidden: false, slot: 1 },
-  ],
+  abilities: [{ ability: { name: 'static', url: '' }, is_hidden: false, slot: 1 }],
   base_experience: 112,
   height: 4,
   weight: 60,
@@ -73,12 +69,8 @@ describe('fetchPokemon', () => {
     const result = await fetchPokemon('');
 
     expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}?limit=50`);
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon/pikachu'
-    );
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon-species/pikachu/'
-    );
+    expect(mockFetch).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/pikachu');
+    expect(mockFetch).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon-species/pikachu/');
 
     expect(result).toHaveLength(1);
     expect(result[0].name).toBe('pikachu');
@@ -90,9 +82,7 @@ describe('fetchPokemon', () => {
     const searchTerm = 'charizard';
     mockFetch.mockResolvedValueOnce({ ok: false, status: 404 });
 
-    await expect(fetchPokemon(searchTerm)).rejects.toThrow(
-      `Pokemon "${searchTerm}" not found`
-    );
+    await expect(fetchPokemon(searchTerm)).rejects.toThrow(`Pokemon "${searchTerm}" not found`);
     expect(mockFetch).toHaveBeenCalledWith(`${API.API_URL}/${searchTerm}`);
   });
 
@@ -105,9 +95,7 @@ describe('fetchPokemon', () => {
   it('throws error if pokemon not found', async () => {
     mockFetch.mockResolvedValueOnce({ ok: false });
 
-    await expect(fetchPokemon('unknownmon')).rejects.toThrow(
-      'Pokemon "unknownmon" not found'
-    );
+    await expect(fetchPokemon('unknownmon')).rejects.toThrow('Pokemon "unknownmon" not found');
     expect(fetch).toHaveBeenCalledWith(`${API.API_URL}/unknownmon`);
   });
 

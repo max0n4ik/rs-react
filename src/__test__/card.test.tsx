@@ -16,10 +16,7 @@ const createTestStore = (preloadedState?: Partial<RootState>) => {
   });
 };
 
-const renderWithProviders = (
-  component: React.ReactElement,
-  preloadedState?: Partial<RootState>
-) => {
+const renderWithProviders = (component: React.ReactElement, preloadedState?: Partial<RootState>) => {
   const store = createTestStore(preloadedState);
   return {
     store,
@@ -54,13 +51,8 @@ describe('Card Component', () => {
   it('renders pokemon card with correct data', () => {
     renderWithProviders(<Card {...mockProps} />);
 
-    expect(
-      screen.getByRole('heading', { name: /pikachu/i })
-    ).toBeInTheDocument();
-    expect(screen.getByRole('presentation')).toHaveAttribute(
-      'src',
-      mockProps.image
-    );
+    expect(screen.getByRole('heading', { name: /pikachu/i })).toBeInTheDocument();
+    expect(screen.getByRole('presentation')).toHaveAttribute('src', mockProps.image);
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
   });
 
@@ -131,10 +123,7 @@ describe('Card Component', () => {
       },
     };
 
-    const { store } = renderWithProviders(
-      <Card {...mockProps} />,
-      preloadedState
-    );
+    const { store } = renderWithProviders(<Card {...mockProps} />, preloadedState);
 
     expect(store.getState().card.selectedPokemons).toHaveLength(1);
 
@@ -148,16 +137,11 @@ describe('Card Component', () => {
   it('maintains other selected pokemons when adding new one', () => {
     const preloadedState = {
       card: {
-        selectedPokemons: [
-          { id: 2, name: 'charmander', image: 'charmander.png' },
-        ],
+        selectedPokemons: [{ id: 2, name: 'charmander', image: 'charmander.png' }],
       },
     };
 
-    const { store } = renderWithProviders(
-      <Card {...mockProps} />,
-      preloadedState
-    );
+    const { store } = renderWithProviders(<Card {...mockProps} />, preloadedState);
 
     const checkbox = screen.getByRole('checkbox');
     fireEvent.click(checkbox);
@@ -186,10 +170,7 @@ describe('Card Component', () => {
       },
     };
 
-    const { store } = renderWithProviders(
-      <Card {...mockProps} />,
-      preloadedState
-    );
+    const { store } = renderWithProviders(<Card {...mockProps} />, preloadedState);
 
     const checkbox = screen.getByRole('checkbox');
     fireEvent.click(checkbox);
@@ -237,9 +218,7 @@ describe('Card Component', () => {
   it('handles pokemon selection state correctly for different IDs', () => {
     const preloadedState = {
       card: {
-        selectedPokemons: [
-          { id: 2, name: 'charmander', image: 'charmander.png' },
-        ],
+        selectedPokemons: [{ id: 2, name: 'charmander', image: 'charmander.png' }],
       },
     };
 
@@ -275,10 +254,7 @@ describe('Card Component', () => {
       },
     };
 
-    const { store } = renderWithProviders(
-      <Card {...mockProps} />,
-      preloadedState
-    );
+    const { store } = renderWithProviders(<Card {...mockProps} />, preloadedState);
 
     const checkbox = screen.getByRole('checkbox');
     expect(checkbox).toBeChecked();

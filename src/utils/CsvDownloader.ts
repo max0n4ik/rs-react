@@ -1,5 +1,5 @@
-import type { SimplifiedPokemon } from '@/api/Type';
-import { fetchPokemonDetails } from '@/api/Api';
+import type { Pokemon } from '@/api/Type';
+// import { useGetPokemonDetailsQuery } from '@/api/api';
 
 type CardProps = {
   id: number;
@@ -7,7 +7,7 @@ type CardProps = {
   image?: string;
 };
 
-const createDetailedCSV = (pokemonList: SimplifiedPokemon[]): string => {
+const createDetailedCSV = (pokemonList: Pokemon[]): string => {
   const header = [
     'id',
     'name',
@@ -31,9 +31,7 @@ const createDetailedCSV = (pokemonList: SimplifiedPokemon[]): string => {
   ].join(',');
 
   const rows = pokemonList.map((p) => {
-    const abilities = p.abilities
-      .map((a) => `${a.name}${a.isHidden ? ' (hidden)' : ''}`)
-      .join(';');
+    const abilities = p.abilities.map((a) => `${a.name}${a.isHidden ? ' (hidden)' : ''}`).join(';');
     const types = p.types.join(';');
     const eggGroups = p.eggGroups.join(';');
     const evYield = Object.entries(p.evYield)
@@ -69,12 +67,12 @@ const createDetailedCSV = (pokemonList: SimplifiedPokemon[]): string => {
 export const downloadCSV = async (cards: CardProps[]) => {
   if (cards.length === 0) return;
 
-  const detailedList: SimplifiedPokemon[] = [];
+  const detailedList: Pokemon[] = [];
 
   for (const card of cards) {
-    const url = `https://pokeapi.co/api/v2/pokemon/${card.id}`;
+    // const url = `https://pokeapi.co/api/v2/pokemon/${card.id}`;
     try {
-      const details = await fetchPokemonDetails(url);
+      // const details = await useGetPokemonDetailsQuery(url);
       detailedList.push(details);
     } catch (err) {
       console.warn(`invalid id: id=${card.id}:`, err);

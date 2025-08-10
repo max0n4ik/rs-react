@@ -1,10 +1,4 @@
-import {
-  render,
-  screen,
-  waitFor,
-  fireEvent,
-  act,
-} from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import DetailCard from '@/page/Detail';
@@ -111,9 +105,7 @@ describe('DetailCard', async () => {
     expect(screen.getByText('grass')).toBeInTheDocument();
     expect(screen.getByText('poison')).toBeInTheDocument();
     expect(screen.getByText('overgrow')).toBeInTheDocument();
-    expect(
-      screen.getByText('chlorophyll (Hidden Ability)')
-    ).toBeInTheDocument();
+    expect(screen.getByText('chlorophyll (Hidden Ability)')).toBeInTheDocument();
     expect(screen.getByText('87.5% male, 12.5% female')).toBeInTheDocument();
     expect(screen.getByText('45')).toBeInTheDocument();
 
@@ -126,9 +118,7 @@ describe('DetailCard', async () => {
   });
 
   it('renders genderless pokemon correctly', async () => {
-    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(
-      mockPokemonDataGenderless
-    );
+    vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonDataGenderless);
 
     renderComponent();
 
@@ -159,15 +149,11 @@ describe('DetailCard', async () => {
       renderComponent();
     });
 
-    expect(api.fetchPokemonDetails).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon/1'
-    );
+    expect(api.fetchPokemonDetails).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/1');
   });
 
   it('refetches data when params.id changes', async () => {
-    const spy = vi
-      .spyOn(api, 'fetchPokemonDetails')
-      .mockResolvedValue(mockPokemonData);
+    const spy = vi.spyOn(api, 'fetchPokemonDetails').mockResolvedValue(mockPokemonData);
 
     let rerender: (arg0: JSX.Element) => void;
     await act(async () => {

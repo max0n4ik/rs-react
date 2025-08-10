@@ -22,9 +22,7 @@ describe('NotFound', () => {
   it('renders description text', () => {
     renderWithRouter(<NotFound />);
     expect(
-      screen.getByText(
-        "Sorry, we can't find that page. You'll find lots to explore on the home page."
-      )
+      screen.getByText("Sorry, we can't find that page. You'll find lots to explore on the home page.")
     ).toBeInTheDocument();
   });
 

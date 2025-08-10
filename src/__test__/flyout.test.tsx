@@ -23,9 +23,7 @@ const mockOnUnselectAll = vi.fn();
 
 const renderFlyout = (selectedCount: number) => {
   vi.mocked(useSelector).mockReturnValue(selectedCount > 0 ? mockPokemons : []);
-  return render(
-    <Flyout selectedCount={selectedCount} onUnselectAll={mockOnUnselectAll} />
-  );
+  return render(<Flyout selectedCount={selectedCount} onUnselectAll={mockOnUnselectAll} />);
 };
 
 describe('Flyout Component', () => {
@@ -34,9 +32,7 @@ describe('Flyout Component', () => {
     if (!window.URL.createObjectURL) {
       window.URL.createObjectURL = vi.fn(() => 'mock-download-url');
     } else {
-      vi.spyOn(window.URL, 'createObjectURL').mockReturnValue(
-        'mock-download-url'
-      );
+      vi.spyOn(window.URL, 'createObjectURL').mockReturnValue('mock-download-url');
     }
 
     if (!window.URL.revokeObjectURL) {
@@ -47,9 +43,7 @@ describe('Flyout Component', () => {
 
     vi.spyOn(Blob.prototype, 'size', 'get').mockReturnValue(1234);
 
-    vi.mocked(downloadCSV).mockResolvedValue(
-      'id,name\n1,Bulbasaur\n4,Charmander'
-    );
+    vi.mocked(downloadCSV).mockResolvedValue('id,name\n1,Bulbasaur\n4,Charmander');
   });
 
   it('should display the correct number of selected items', async () => {

@@ -4,7 +4,6 @@ import Flyout from '@/components/Flyout';
 import '@testing-library/jest-dom';
 import { act } from 'react';
 
-// Mock typed selector hook and RTK Query hook used inside Flyout
 const mockUseRootSelector = vi.fn();
 const mockUseGenerateCSVDownloadQuery = vi.fn();
 
@@ -77,7 +76,6 @@ describe('Flyout Component', () => {
   it('should prepare a CSV file for download when pokemons are selected', async () => {
     renderFlyout(2);
     await waitFor(() => {
-      // Hook provides a ready-to-use URL for download
       expect(mockUseGenerateCSVDownloadQuery).toHaveBeenCalled();
     });
     const downloadLink = screen.getByRole('link', { name: /download/i });
@@ -92,7 +90,6 @@ describe('Flyout Component', () => {
 
   it('should revoke the object URL upon component unmount', async () => {
     const { unmount } = renderFlyout(1);
-    // Wait until the download link is populated
     await waitFor(() =>
       expect(screen.getByRole('link', { name: /download/i })).toHaveAttribute('href', 'mock-download-url')
     );

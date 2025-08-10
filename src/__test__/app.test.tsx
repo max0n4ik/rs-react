@@ -9,10 +9,8 @@ import cardReducer from '@/store/CardSlice.ts';
 import searchReducer from '@/store/SearchSlice';
 import { App } from '@/page/App';
 
-// Spy to control RTK Query hook behaviour
 const mockUseGetPokemonQuery = vi.fn();
 
-// Mock API: forward args to the spy so we can assert call params
 vi.mock('@/api/api', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return {
@@ -31,7 +29,6 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
-// Mock data for a successful API response
 const mockPokemonListData = [
   { id: 1, name: 'bulbasaur', image: '' },
   { id: 2, name: 'charmander', image: '' },
@@ -72,12 +69,10 @@ describe('App Component Integration Tests', async () => {
       pathname: '/',
       hash: '',
     });
-    // Default hook return to avoid destructuring errors
     mockUseGetPokemonQuery.mockReturnValue({ data: mockPokemonListData, isLoading: false, error: undefined });
   });
 
   it('renders loading state initially', () => {
-    // Mock the hook to return the loading state
     mockUseGetPokemonQuery.mockReturnValue({
       data: undefined,
       isLoading: true,
@@ -86,12 +81,10 @@ describe('App Component Integration Tests', async () => {
 
     renderComponent();
 
-    // Spinner has an sr-only text
     expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
   });
 
   it('renders pokemon list on successful data fetch', async () => {
-    // Mock the hook to return successful data
     mockUseGetPokemonQuery.mockReturnValue({
       data: mockPokemonListData,
       isLoading: false,
@@ -100,7 +93,6 @@ describe('App Component Integration Tests', async () => {
 
     renderComponent();
 
-    // Wait for the data to be rendered
     await waitFor(() => {
       expect(screen.getByText('bulbasaur')).toBeInTheDocument();
       expect(screen.getByText('charmander')).toBeInTheDocument();
@@ -133,7 +125,6 @@ describe('App Component Integration Tests', async () => {
     fireEvent.click(searchButton);
 
     await waitFor(() => {
-      // Last call should be with the updated search term and page 1 => offset 0
       const lastCallArgs = mockUseGetPokemonQuery.mock.calls.at(-1)?.[0] as { name: string; offset: number };
       expect(lastCallArgs).toMatchObject({ name: 'pikachu', offset: 0 });
     });

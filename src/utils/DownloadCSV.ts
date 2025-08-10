@@ -1,13 +1,6 @@
-import type { Pokemon } from '@/api/Type';
-// import { useGetPokemonDetailsQuery } from '@/api/api';
+import type { DetailedPokemon } from '@/api/Type';
 
-type CardProps = {
-  id: number;
-  name: string;
-  image?: string;
-};
-
-const createDetailedCSV = (pokemonList: Pokemon[]): string => {
+export const createDetailedCSV = (pokemonList: DetailedPokemon[]): string => {
   const header = [
     'id',
     'name',
@@ -62,24 +55,4 @@ const createDetailedCSV = (pokemonList: Pokemon[]): string => {
   });
 
   return `${header}\n${rows.join('\n')}`;
-};
-
-export const downloadCSV = async (cards: CardProps[]) => {
-  if (cards.length === 0) return;
-
-  const detailedList: Pokemon[] = [];
-
-  for (const card of cards) {
-    // const url = `https://pokeapi.co/api/v2/pokemon/${card.id}`;
-    try {
-      // const details = await useGetPokemonDetailsQuery(url);
-      detailedList.push(details);
-    } catch (err) {
-      console.warn(`invalid id: id=${card.id}:`, err);
-    }
-  }
-
-  const csvContent = createDetailedCSV(detailedList);
-
-  return csvContent;
 };

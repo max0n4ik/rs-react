@@ -1,20 +1,15 @@
+import type { PokemonCard } from '@/api/Type';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-type Props = {
-  id: number;
-  name: string;
-  image?: string;
-};
-
 type PokemonsState = {
-  selectedPokemons: Props[];
+  selectedPokemons: PokemonCard[];
 };
 
 const initialState: PokemonsState = {
   selectedPokemons: [],
 };
 type AddPokemonPayload = {
-  pokemon: Props;
+  pokemon: PokemonCard;
 };
 type RemovePokemonPayload = {
   id: number;

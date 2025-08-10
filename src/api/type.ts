@@ -58,10 +58,6 @@ export type FullPokemonDetails = PokemonDetails & {
   base_experience: number;
 };
 
-export type DataPokemon = {
-  data: Pokemon[];
-};
-
 export type PokemonSpecies = {
   gender_rate: number;
   capture_rate: number;
@@ -104,3 +100,32 @@ export type PokemonCard = {
   name: string;
   image: string;
 };
+
+export interface DetailedPokemon {
+  id: number;
+  name: string;
+  image: string;
+  types: string[];
+  abilities: {
+    name: string;
+    isHidden: boolean;
+  }[];
+  genderRatio: {
+    male: number;
+    female: number;
+  } | null;
+  catchRate: number;
+  eggGroups: string[];
+  hatchTime: number;
+  height: number;
+  weight: number;
+  baseExp: number;
+  growthRate: string;
+  evYield: {
+    [stat: string]: number;
+  };
+  color: string;
+  shape: string;
+  baseFriendship: number;
+  footprint: string | null;
+}

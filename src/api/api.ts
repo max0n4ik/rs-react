@@ -1,6 +1,37 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API, ITEMS_PER_PAGE } from '@/utils/Constants';
-import type { NamedAPIResourceList, Pokemon, PokemonCard } from './Type';
+import type {
+  DetailedPokemon,
+  FullPokemonDetails,
+  NamedAPIResourceList,
+  Pokemon,
+  PokemonCard,
+  PokemonSpecies,
+} from './Type';
+import { createDetailedCSV } from '@/utils/DownloadCSV';
+import { transformToDetailedPokemon } from '@/utils/pokemonUtils';
+
+const fetchDetailedPokemon = async (pokemonId: number | string): Promise<DetailedPokemon> => {
+  const pokemonData = await fetchPokemonData(pokemonId);
+  const speciesData = await fetchSpeciesData(pokemonData.species.url);
+  return transformToDetailedPokemon(pokemonData, speciesData);
+};
+
+const fetchPokemonData = async (pokemonId: number | string): Promise<FullPokemonDetails> => {
+  const pokemonResponse = await fetch(`${API.API_URL}/${pokemonId}`);
+  if (!pokemonResponse.ok) {
+    throw new Error(`Failed to fetch Pokemon ${pokemonId}: ${pokemonResponse.status}`);
+  }
+  return pokemonResponse.json();
+};
+
+const fetchSpeciesData = async (speciesUrl: string): Promise<PokemonSpecies> => {
+  const speciesResponse = await fetch(speciesUrl);
+  if (!speciesResponse.ok) {
+    throw new Error(`Failed to fetch species data: ${speciesResponse.status}`);
+  }
+  return speciesResponse.json();
+};
 
 export const pokemonApi = createApi({
   reducerPath: 'pokemonApi',
@@ -37,7 +68,49 @@ export const pokemonApi = createApi({
       },
       providesTags: ['Pokemon'],
     }),
+    getPokemonDetails: builder.query<DetailedPokemon, string>({
+      async queryFn(url) {
+        try {
+          const pokemonId = url.split('/').filter(Boolean).pop() || '';
+
+          const detailedPokemon = await fetchDetailedPokemon(pokemonId);
+          return { data: detailedPokemon };
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          return {
+            error: { status: 'CUSTOM_ERROR', error: errorMessage },
+          };
+        }
+      },
+    }),
+    generateCSVDownload: builder.query<string, PokemonCard[]>({
+      async queryFn(pokemonCards) {
+        try {
+          const detailedList: DetailedPokemon[] = [];
+
+          for (const card of pokemonCards) {
+            try {
+              const detailedPokemon = await fetchDetailedPokemon(card.id);
+              detailedList.push(detailedPokemon);
+            } catch (err) {
+              console.warn(`Error processing Pokemon ${card.id}:`, err);
+            }
+          }
+
+          const csvContent = createDetailedCSV(detailedList);
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const downloadUrl = URL.createObjectURL(blob);
+
+          return { data: downloadUrl };
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          return {
+            error: { status: 'CUSTOM_ERROR', error: errorMessage },
+          };
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetPokemonQuery } = pokemonApi;
+export const { useGetPokemonQuery, useGetPokemonDetailsQuery, useGenerateCSVDownloadQuery } = pokemonApi;

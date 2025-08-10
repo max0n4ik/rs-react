@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { downloadCSV } from '@/utils/CsvDownloader';
 import { useRootSelector } from '@/store/store';
+import { useGenerateCSVDownloadQuery } from '@/api/api';
 
 type FlyoutProps = {
   selectedCount: number;
@@ -11,19 +11,18 @@ export default function Flyout({ selectedCount, onUnselectAll }: FlyoutProps) {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [filename, setFilename] = useState<string | null>(null);
+
   const selectedPokemons = useRootSelector((state) => state.card.selectedPokemons);
+  const { data: csvData } = useGenerateCSVDownloadQuery(selectedPokemons, {
+    skip: selectedPokemons.length === 0,
+  });
 
   useEffect(() => {
-    let url: string;
+    let url: string | undefined;
 
     const prepareCSV = async () => {
-      if (selectedPokemons.length === 0) return;
-
-      const csvContent = await downloadCSV(selectedPokemons);
-      if (!csvContent) return;
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      url = URL.createObjectURL(blob);
+      if (selectedPokemons.length === 0 || !csvData) return;
+      url = csvData;
       setDownloadUrl(url);
       setFilename(`${selectedPokemons.length}_items.csv`);
     };
@@ -33,7 +32,7 @@ export default function Flyout({ selectedCount, onUnselectAll }: FlyoutProps) {
     return () => {
       if (url) URL.revokeObjectURL(url);
     };
-  }, [selectedPokemons]);
+  }, [selectedPokemons, csvData]);
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 flex items-center justify-between border dark:border-gray-700">

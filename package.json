@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint:next": "next lint",
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
@@ -15,12 +17,16 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@next/eslint-plugin-next": "^15.4.6",
     "@reduxjs/toolkit": "^2.8.2",
+    "@tailwindcss/postcss": "^4.1.12",
     "@tailwindcss/vite": "^4.1.11",
     "@testing-library/user-event": "^14.6.1",
     "classnames": "^2.5.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "next": "^15.4.6",
+    "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",
     "redux-persist": "^6.0.0",
     "tailwindcss": "^4.1.11"
@@ -52,10 +58,8 @@
     "jsdom": "^26.1.0",
     "lint-staged": "^16.1.2",
     "prettier": "3.6.2",
-    "react-router": "^7.7.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vite": "^7.0.3",
     "vitest": "^3.2.4"
   }
 }

@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import Link from 'next/link';
 
 export default function NotFound() {
   return (
@@ -13,7 +13,7 @@ export default function NotFound() {
             Sorry, we can&apos;t find that page. You&apos;ll find lots to explore on the home page.{' '}
           </p>
           <Link
-            to="/"
+            href="/"
             className="inline-flex text-white bg-[#60a5fa] hover:bg-[#1e40af] focus:ring-4 focus:outline-none focus:ring-[#93c5fd] font-medium rounded-lg text-sm px-5 py-2.5 text-center my-4">
             Back to Homepage
           </Link>

@@ -1,5 +1,6 @@
+'use client';
 import { configureStore } from '@reduxjs/toolkit';
-import cardReducer from '@/store/CardSlice.ts';
+import cardReducer from '@/store/CardSlice';
 import searchReducer from '@/store/SearchSlice';
 import { pokemonApi } from '@/api/api';
 import { useDispatch, useSelector } from 'react-redux';

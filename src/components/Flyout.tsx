@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useRootSelector } from '@/store/store';
 import { useGenerateCSVDownloadQuery } from '@/api/api';

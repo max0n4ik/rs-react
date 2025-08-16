@@ -1,7 +1,9 @@
-import { useContext } from 'react';
-import { useSearchParams } from 'react-router';
+'use client';
+
+import { useContext, useEffect } from 'react';
+// import { useSearchParams } from 'next/navigation';
 import { ThemeContext } from '@/store/ContextStore';
-import useLocalStorage from '@/hooks/UseLocalStorage';
+import useLocalStorage from '@/hooks/useLocalStorage';
 import { useRootDispatch } from '@/store/store';
 import { setSearchTerm } from '@/store/SearchSlice';
 import { pokemonApi } from '@/api/api';
@@ -9,16 +11,23 @@ import { pokemonApi } from '@/api/api';
 export default function Search() {
   const dispatch = useRootDispatch();
   const [searchState, setSearchState] = useLocalStorage<string>('searchState', '');
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const searchParams = useSearchParams();
   const { theme, toggleTheme } = useContext(ThemeContext);
+
+  useEffect(() => {
+    const savedSearchTerm = localStorage.getItem('searchState');
+    if (savedSearchTerm) {
+      dispatch(setSearchTerm(savedSearchTerm));
+    }
+  }, [dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchState(e.target.value);
   };
 
   const handleSearch = () => {
-    searchParams.set('page', String(1));
-    setSearchParams(searchParams);
+    // searchParams.set('page', String(1));
+    // setSearchParams(searchParams);
     setSearchState(searchState.trim());
     dispatch(setSearchTerm(searchState.trim()));
   };
@@ -31,8 +40,8 @@ export default function Search() {
 
   const handleResetCache = () => {
     setSearchState('');
-    searchParams.delete('page');
-    setSearchParams(searchParams);
+    // searchParams.delete('page');
+    // setSearchParams(searchParams);
     dispatch(setSearchTerm(''));
     localStorage.removeItem('searchState');
 

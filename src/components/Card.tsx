@@ -1,18 +1,19 @@
-import { useDispatch } from 'react-redux';
-import { Link, useLocation } from 'react-router';
-import { addCard, removeCard } from '@/store/CardSlice';
-import { useRootSelector } from '@/store/store';
+'use client';
 
-import type { PokemonCard } from '@/api/Type';
-import { useEffect, useState } from 'react';
+import { addCard, removeCard } from '@/store/CardSlice';
+import { useRootDispatch, useRootSelector } from '@/store/store';
+
+import type { PokemonCard } from '@/api/type';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+// import router from 'next/navigation';
 
 type CardProps = PokemonCard & { isLoading?: boolean };
 
 export default function Card({ id, name, image, isLoading }: CardProps) {
-  const [imgLoading, setImgLoading] = useState(true);
-  const location = useLocation();
-  const dispatch = useDispatch();
-
+  const dispatch = useRootDispatch();
+  const searchParams = useSearchParams();
   const selectedPokemons = useRootSelector((state) => state.card.selectedPokemons);
   const isSelected = selectedPokemons.some((p: { id: number }) => p.id === id);
   const handleCheckboxChange = () => {
@@ -23,21 +24,14 @@ export default function Card({ id, name, image, isLoading }: CardProps) {
     }
   };
 
-  useEffect(() => {
-    if (!image) return;
-    setImgLoading(true);
-
-    const img = new Image();
-    img.src = image;
-    img.onload = () => setImgLoading(false);
-    img.onerror = () => setImgLoading(false);
-  }, [image]);
-
   return (
     <Link
-      to={{
-        pathname: `detail/${id}`,
-        search: location.search,
+      // onClick={() => {
+      //   router.push(`/detail/${id}`);
+      // }}
+      href={{
+        pathname: `/detail/${id}`,
+        query: { page: searchParams.get('page')?.toString() ?? '1' },
       }}>
       <div className="border p-4 rounded shadow bg-white dark:bg-black hover:shadow-md dark:border-white transition flex flex-col relative">
         <input
@@ -51,7 +45,7 @@ export default function Card({ id, name, image, isLoading }: CardProps) {
           onClick={(e) => e.stopPropagation()}
         />
 
-        {(isLoading || imgLoading) && (
+        {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black">
             <svg
               aria-hidden="true"
@@ -72,12 +66,12 @@ export default function Card({ id, name, image, isLoading }: CardProps) {
           </div>
         )}
 
-        <img
+        <Image
+          width={116}
+          height={116}
           src={image}
           alt={name}
-          className={`render-pixel size-29 self-center transition-opacity duration-300 ${
-            imgLoading ? 'opacity-0' : 'opacity-100'
-          }`}
+          className="render-pixel size-29 self-center transition-opacity duration-300"
         />
 
         <h2 className="text-lg font-semibold capitalize text-center dark:text-white">{name}</h2>

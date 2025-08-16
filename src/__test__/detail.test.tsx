@@ -3,9 +3,9 @@ import { BrowserRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import DetailCard from '@/page/Detail';
+import DetailCard from '@/app/detail/[id]/page';
 import { useGetPokemonDetailsQuery } from '@/api/api';
-import type { DetailedPokemon } from '@/api/Type';
+import type { DetailedPokemon } from '@/api/type';
 
 type MockQueryResult = {
   data: DetailedPokemon | undefined;

@@ -5,7 +5,7 @@ import type {
   GenderRatio,
   EvYield,
   PokemonStat,
-} from '@/api/Type';
+} from '@/api/type';
 
 export const calculateGenderRatio = (genderRate: number): GenderRatio | null => {
   if (genderRate === -1) return null;

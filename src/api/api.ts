@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API, ITEMS_PER_PAGE } from '@/utils/Constants';
+import { API, ITEMS_PER_PAGE } from '@/utils/constants';
 import type {
   DetailedPokemon,
   FullPokemonDetails,
@@ -7,7 +7,7 @@ import type {
   Pokemon,
   PokemonCard,
   PokemonSpecies,
-} from './Type';
+} from './type';
 import { createDetailedCSV } from '@/utils/DownloadCSV';
 import { transformToDetailedPokemon } from '@/utils/pokemonUtils';
 

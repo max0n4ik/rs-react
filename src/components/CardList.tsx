@@ -1,22 +1,35 @@
+'use client';
+
 import Card from '@/components/Card';
 import Pagination from '@/components/Pagination';
 import { useGetPokemonQuery } from '@/api/api';
 import { useRootSelector } from '@/store/store';
-import { useState } from 'react';
-import { ITEMS_PER_PAGE } from '@/utils/Constants';
-import { useSearchParams } from 'react-router';
+import { useCallback, useState } from 'react';
+import { ITEMS_PER_PAGE } from '@/utils/constants';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function CardList() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
   const offset = Math.max(0, (page - 1) * ITEMS_PER_PAGE);
   const searchTerm = useRootSelector((state) => state.search.searchTerm);
   const { data, isLoading, error } = useGetPokemonQuery({ name: searchTerm, offset });
 
-  const changePage = (newPage: number) => {
-    setPage(newPage);
-    searchParams.set('page', String(newPage));
-    setSearchParams(searchParams);
+  const createQueryString = useCallback(
+    (value: number) => {
+      setPage(value);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('page', String(value));
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  const changePage = (value: number) => {
+    router.push(pathname + '?' + createQueryString(value));
   };
 
   if (data?.length === 0) {

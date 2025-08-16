@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 import cardReducer from '@/store/CardSlice.ts';
 import searchReducer from '@/store/SearchSlice';
-import { App } from '@/page/App';
+import { App } from '@/app/page';
 
 const mockUseGetPokemonQuery = vi.fn();
 

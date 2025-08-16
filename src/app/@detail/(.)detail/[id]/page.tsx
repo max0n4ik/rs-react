@@ -1,25 +1,17 @@
-import { useLocation, useNavigate, useParams } from 'react-router';
+'use client';
+
 import { useGetPokemonDetailsQuery } from '@/api/api';
-import { typeColors } from '@/utils/Constants';
+import { typeColors } from '@/utils/constants';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 export default function DetailCard() {
-  const [imgLoading, setImgLoading] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const params = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
   const { data, isLoading, isError } = useGetPokemonDetailsQuery(`${params.id}`);
 
-  useEffect(() => {
-    if (!data?.image) return;
-    setImgLoading(true);
-
-    const img = new Image();
-    img.src = data.image;
-    img.onload = () => setImgLoading(false);
-    img.onerror = () => setImgLoading(false);
-  }, [data]);
+  const prevPath = '..' + (searchParams.toString() ? '?' + searchParams.toString() : '');
 
   if (isError) {
     return (
@@ -34,7 +26,7 @@ export default function DetailCard() {
     <div className="flex flex-col items-center justify-center  text-center">
       <button
         className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-md"
-        onClick={() => navigate('..' + location.search, { replace: true })}>
+        onClick={() => router.replace(prevPath)}>
         Close
       </button>
       {isLoading && (
@@ -65,7 +57,7 @@ export default function DetailCard() {
               #{data?.id.toString().padStart(4, '0')}
             </span>
           </div>
-          {(isLoading || imgLoading) && (
+          {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black">
               <svg
                 aria-hidden="true"
@@ -85,11 +77,7 @@ export default function DetailCard() {
               <span className="sr-only">Loading...</span>
             </div>
           )}
-          <img
-            src={data?.image}
-            alt="Bulbasaur"
-            className={`w-full h-auto object-contain render-pixel ${imgLoading ? 'opacity-0' : 'opacity-100'}`}
-          />
+          <img src={data?.image} alt="Bulbasaur" className="w-full h-auto object-contain render-pixel" />
           <div className="p-3 space-y-2">
             <p className="text-center">Types:</p>
             <div className="flex justify-center gap-2">

@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
 import { pokemonApi } from '@/api/api';
-import { API } from '@/utils/Constants';
+import { API } from '@/utils/constants';
 import { transformToDetailedPokemon } from '@/utils/pokemonUtils';
 import { createDetailedCSV } from '@/utils/DownloadCSV';
-import type { FullPokemonDetails, PokemonSpecies } from '@/api/Type';
+import type { FullPokemonDetails, PokemonSpecies } from '@/api/type';
 
 const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
 globalThis.fetch = fetchMock as unknown as typeof fetch;

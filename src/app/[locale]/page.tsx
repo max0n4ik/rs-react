@@ -7,8 +7,12 @@ import Link from 'next/link';
 import Flyout from '@/components/Flyout';
 import { clearCards } from '@/store/CardSlice';
 import { useRootDispatch, useRootSelector } from '@/store/store';
+import DetailCard from '@/components/DetailCard';
+import { useSearchParams } from 'next/navigation';
 
 export default function App() {
+  const searchParams = useSearchParams();
+  const detailId = searchParams.get('detail');
   const dispatch = useRootDispatch();
   const selectedPokemons = useRootSelector((state) => state.card.selectedPokemons);
 
@@ -26,7 +30,7 @@ export default function App() {
           </Link>
         </div>
       </div>
-
+      {detailId && <DetailCard />}
       {selectedPokemons.length != 0 && (
         <Flyout
           selectedCount={selectedPokemons.length}

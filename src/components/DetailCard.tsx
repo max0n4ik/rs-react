@@ -3,15 +3,16 @@
 import { useGetPokemonDetailsQuery } from '@/api/api';
 import { typeColors } from '@/utils/constants';
 import classNames from 'classnames';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function DetailCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = useParams();
-  const { data, isLoading, isError } = useGetPokemonDetailsQuery(`${params.id}`);
+  const detailId = searchParams.get('detail');
+  const page = searchParams.get('page');
+  const { data, isLoading, isError } = useGetPokemonDetailsQuery(`${detailId}`);
 
-  const prevPath = '..' + (searchParams.toString() ? '?' + searchParams.toString() : '');
+  const prevPath = `?page=${page}`;
 
   if (isError) {
     return (

@@ -18,7 +18,7 @@ const fetchDetailedPokemon = async (pokemonId: number | string): Promise<Detaile
 };
 
 const fetchPokemonData = async (pokemonId: number | string): Promise<FullPokemonDetails> => {
-  const pokemonResponse = await fetch(`${API.API_URL}/${pokemonId}`);
+  const pokemonResponse = await fetch(`${API.API_URL}/${pokemonId}`, { cache: 'force-cache' });
   if (!pokemonResponse.ok) {
     throw new Error(`Failed to fetch Pokemon ${pokemonId}: ${pokemonResponse.status}`);
   }
@@ -26,7 +26,7 @@ const fetchPokemonData = async (pokemonId: number | string): Promise<FullPokemon
 };
 
 const fetchSpeciesData = async (speciesUrl: string): Promise<PokemonSpecies> => {
-  const speciesResponse = await fetch(speciesUrl);
+  const speciesResponse = await fetch(speciesUrl, { cache: 'force-cache' });
   if (!speciesResponse.ok) {
     throw new Error(`Failed to fetch species data: ${speciesResponse.status}`);
   }

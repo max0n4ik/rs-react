@@ -6,13 +6,13 @@ import { useRootDispatch, useRootSelector } from '@/store/store';
 import type { PokemonCard } from '@/api/type';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-// import router from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 
 type CardProps = PokemonCard & { isLoading?: boolean };
 
 export default function Card({ id, name, image, isLoading }: CardProps) {
   const dispatch = useRootDispatch();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const selectedPokemons = useRootSelector((state) => state.card.selectedPokemons);
   const isSelected = selectedPokemons.some((p: { id: number }) => p.id === id);
@@ -24,15 +24,15 @@ export default function Card({ id, name, image, isLoading }: CardProps) {
     }
   };
 
+  const handleClick = () => {
+    if (searchParams) {
+      const pageNumber = searchParams.get('page') || '1';
+      router.push(`/?page=${pageNumber}&detail=${id}`);
+    }
+  };
+
   return (
-    <Link
-      // onClick={() => {
-      //   router.push(`/detail/${id}`);
-      // }}
-      href={{
-        pathname: `/detail/${id}`,
-        query: { page: searchParams.get('page')?.toString() ?? '1' },
-      }}>
+    <button className="cursor-pointer" onClick={handleClick}>
       <div className="border p-4 rounded shadow bg-white dark:bg-black hover:shadow-md dark:border-white transition flex flex-col relative">
         <input
           className="size-4 self-end z-10"
@@ -76,6 +76,6 @@ export default function Card({ id, name, image, isLoading }: CardProps) {
 
         <h2 className="text-lg font-semibold capitalize text-center dark:text-white">{name}</h2>
       </div>
-    </Link>
+    </button>
   );
 }

@@ -1,6 +1,54 @@
 {
   "HomePage": {
-    "title": "Hello world!",
-    "about": "Go to the about page"
+    "about": "About"
+  },
+  "AboutPage": {
+    "title": "About",
+    "h1": "About",
+    "createBy": "Created by ",
+    "back": "Back to Homepage",
+    "for": "for"
+  },
+  "Search": {
+    "search": "Search",
+    "reset": "Reset Cache",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "DetailCard": {
+    "Ups": "Ups",
+    "Error": "Error with fetching",
+    "Close": "Close",
+    "Loading": "Loading",
+    "Types": "Types:",
+    "Abilities": "Abilities:",
+    "male": "male",
+    "female": "female",
+    "HidenA": "(Hidden Ability)",
+    "GenderRation": "Gender ratio:",
+    "Gender": "Gender:",
+    "Genderless": "Genderless",
+    "CatchRate": "Catch rate:",
+    "EggGroup": "Egg Group:",
+    "HatchTime": "Hatch time:",
+    "steps": "steps",
+    "m": "m",
+    "kg": "kg",
+    "Height": "Height:",
+    "Weight": "Weight:",
+    "BaseEXP": "Base EXP:",
+    "GrowthRate": "Growth rate:",
+    "EVyield": "EV yield:"
+  },
+  "NotFound": {
+    "miss": " Something&apos;s missing.",
+    "sorry": "Sorry, we can&apos;t find that page. You&apos;ll find lots to explore on the home page.",
+    "back": "Back to Homepage"
+  },
+  "Flyout": {
+    "item": "item",
+    "selected": "selected",
+    "unselect": "Unselect all",
+    "download": "Download"
   }
 }

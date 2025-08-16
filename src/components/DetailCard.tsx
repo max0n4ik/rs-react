@@ -1,15 +1,18 @@
 'use client';
 
 import { useGetPokemonDetailsQuery } from '@/api/api';
+import { useRouter } from '@/i18n/navigation';
 import { typeColors } from '@/utils/constants';
 import classNames from 'classnames';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 
 export default function DetailCard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const detailId = searchParams.get('detail');
   const page = searchParams.get('page');
+  const t = useTranslations('DetailCard');
   const { data, isLoading, isError } = useGetPokemonDetailsQuery(`${detailId}`);
 
   const prevPath = `?page=${page}`;
@@ -17,8 +20,8 @@ export default function DetailCard() {
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center p-4 text-center text-red-600">
-        <h2 className="text-xl font-bold mb-2">Ups</h2>
-        <h2 className="text-xl font-bold mb-2">Error with fetching</h2>
+        <h2 className="text-xl font-bold mb-2">{t('Ups')}</h2>
+        <h2 className="text-xl font-bold mb-2">{t('Error')}</h2>
       </div>
     );
   }
@@ -28,7 +31,7 @@ export default function DetailCard() {
       <button
         className="inline-flex items-center gap-2 bg-[#60a5fa] text-white text-lg font-semibold py-3 px-6 rounded-md"
         onClick={() => router.replace(prevPath)}>
-        Close
+        {t('Close')}
       </button>
       {isLoading && (
         <div role="status" className="flex items-center justify-center">
@@ -47,7 +50,7 @@ export default function DetailCard() {
               fill="currentFill"
             />
           </svg>
-          <span className="sr-only">Loading...</span>
+          <span className="sr-only">{t('Loading')}...</span>
         </div>
       )}
       <div className="max-w-xs mx-auto bg-white rounded-xl border-4 border-green-300 shadow-xl font-sans overflow-hidden text-sm dark:text-white dark:bg-black">
@@ -75,12 +78,12 @@ export default function DetailCard() {
                   fill="currentFill"
                 />
               </svg>
-              <span className="sr-only">Loading...</span>
+              <span className="sr-only">{t('Loading')}...</span>
             </div>
           )}
           <img src={data?.image} alt="Bulbasaur" className="w-full h-auto object-contain render-pixel" />
           <div className="p-3 space-y-2">
-            <p className="text-center">Types:</p>
+            <p className="text-center">{t('Types')}</p>
             <div className="flex justify-center gap-2">
               {data?.types.map((type) => (
                 <span
@@ -92,11 +95,11 @@ export default function DetailCard() {
             </div>
 
             <div className="">
-              <p className="text-center">Abilities:</p>
+              <p className="text-center">{t('Abilities')}</p>
               <div className="flex gap-2">
                 {data?.abilities.map((a) => (
                   <div key={a.name} className={a.isHidden ? 'capitalize p-2 italic text-gray-500' : 'capitalize p-2'}>
-                    {a.name} {a.isHidden && '(Hidden Ability)'}
+                    {a.name} {a.isHidden && t('HidenA')}
                   </div>
                 ))}
               </div>
@@ -104,7 +107,7 @@ export default function DetailCard() {
 
             {data?.genderRatio ? (
               <div>
-                <strong>Gender ratio:</strong>
+                <strong>{t('GenderRation')}</strong>
                 <div className="w-full h-3 bg-blue-300 relative rounded overflow-hidden">
                   <div
                     className="absolute top-0 left-0 h-full bg-pink-400"
@@ -112,45 +115,45 @@ export default function DetailCard() {
                   />
                 </div>
                 <div className="text-xs mt-1 text-gray-600">
-                  {data?.genderRatio.male.toFixed(1)}% male, {data?.genderRatio.female.toFixed(1)}% female
+                  {data?.genderRatio.male.toFixed(1)}% {t('male')}, {data?.genderRatio.female.toFixed(1)}% {t('female')}
                 </div>
               </div>
             ) : (
               <div>
-                <strong>Gender:</strong> Genderless
+                <strong>{t('Gender')}</strong> {t('Genderless')}
               </div>
             )}
 
             <div>
-              <strong>Catch rate:</strong> {data?.catchRate}
+              <strong>{t('CatchRate')}</strong> {data?.catchRate}
             </div>
 
             <div>
-              <strong>Egg Groups:</strong> {data?.eggGroups?.join(', ')}
+              <strong>{t('EggGroup')}</strong> {data?.eggGroups?.join(', ')}
               <br />
-              <strong>Hatch time:</strong> {data?.hatchTime} steps
+              <strong>{t('HatchTime')}</strong> {data?.hatchTime} {t('steps')}
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <strong>Height:</strong> {data?.height} m
+                <strong>{t('Height')}</strong> {data?.height} {t('m')}
               </div>
               <div>
-                <strong>Weight:</strong> {data?.weight} kg
+                <strong>{t('Weight')}</strong> {data?.weight} {t('kg')}
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <strong>Base EXP:</strong> {data?.baseExp}
+                <strong>{t('BaseEXP')}</strong> {data?.baseExp}
               </div>
               <div>
-                <strong>Growth rate:</strong> {data?.growthRate}
+                <strong>{t('GrowthRate')}</strong> {data?.growthRate}
               </div>
             </div>
 
             <div>
-              <strong>EV yield:</strong>
+              <strong>{t('EVyield')}</strong>
               {Object.entries(data?.evYield ?? {}).map(([stat, value]) => (
                 <div key={stat}>
                   {value} {stat}

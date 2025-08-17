@@ -1,4 +1,4 @@
-import type { DetailedPokemon } from '@/api/type';
+import type { DetailedPokemon } from '@/app/api/type';
 
 export const createDetailedCSV = (pokemonList: DetailedPokemon[]): string => {
   const header = [

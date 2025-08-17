@@ -13,7 +13,8 @@
     "search": "Найти",
     "reset": "Сбросить Кэш",
     "light": "Светлая",
-    "dark": "Темная"
+    "dark": "Темная",
+    "locale": "{locale, select, ru {Ru} en {En} other {Unknown}}"
   },
   "DetailCard": {
     "Ups": "Упс",

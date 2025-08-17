@@ -13,7 +13,8 @@
     "search": "Search",
     "reset": "Reset Cache",
     "light": "Light",
-    "dark": "Dark"
+    "dark": "Dark",
+    "locale": "{locale, select, ru {Ru} en {En} other {Unknown}}"
   },
   "DetailCard": {
     "Ups": "Ups",

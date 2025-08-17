@@ -1,24 +1,28 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { ChangeEvent, startTransition, useContext, useEffect } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import { ThemeContext } from '@/store/ContextStore';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { useRootDispatch } from '@/store/store';
 import { setSearchTerm } from '@/store/SearchSlice';
-import { pokemonApi } from '@/api/api';
-import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { usePathname, useRouter } from '@/i18n/navigation';
+import { Locale, useLocale, useTranslations } from 'next-intl';
+import { routing } from '@/i18n/routing';
 
 export default function Search() {
   const dispatch = useRootDispatch();
   const router = useRouter();
   const t = useTranslations('Search');
+  const locale = useLocale();
+  const pathname = usePathname();
+  const params = useParams();
   const [searchState, setSearchState] = useLocalStorage<string>('searchState', '');
   const searchParams = useSearchParams();
   const detailId = searchParams.get('detail');
   const { theme, toggleTheme } = useContext(ThemeContext);
   const prevPath = `?page=1` + (detailId ? `&detail=${detailId}` : '');
+
   useEffect(() => {
     const savedSearchTerm = localStorage.getItem('searchState');
     if (savedSearchTerm) {
@@ -41,14 +45,24 @@ export default function Search() {
       handleSearch();
     }
   };
+  const onSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const nextLocale = event.target.value as Locale;
+    startTransition(() => {
+      router.replace(
+        // @ts-expect-error -- TypeScript will validate that only known `params`
+        // are used in combination with a given `pathname`. Since the two will
+        // always match for the current route, we can skip runtime checks.
+        { pathname, params },
+        { locale: nextLocale }
+      );
+    });
+  };
 
   const handleResetCache = () => {
     router.replace('/');
     setSearchState('');
     dispatch(setSearchTerm(''));
     localStorage.removeItem('searchState');
-
-    dispatch(pokemonApi.util.resetApiState());
   };
 
   {
@@ -56,6 +70,16 @@ export default function Search() {
       <div className="flex justify-center  flex-col mb-8">
         <h1 className="text-center text-3xl mb-5">Pokewiki</h1>
         <div className="flex relative rounded-md w-full px-4 max-w-3xl mx-auto">
+          <select
+            onChange={onSelectChange}
+            defaultValue={locale}
+            className="border-2 mr-9 p-3 rounded-md border-gray-300 dark:border-gray-100 dark:bg-black dark:text-white">
+            {routing.locales.map((cur) => (
+              <option key={cur} value={cur}>
+                {t('locale', { locale: cur })}
+              </option>
+            ))}
+          </select>
           <button
             className="border-2 mr-9 p-3 rounded-md border-gray-300 dark:border-gray-100 dark:bg-black dark:text-white"
             onClick={toggleTheme}>

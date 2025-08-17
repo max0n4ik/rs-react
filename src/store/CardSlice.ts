@@ -1,4 +1,4 @@
-import type { PokemonCard } from '@/api/type';
+import type { PokemonCard } from '@/app/api/type';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 type PokemonsState = {

@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router';
+
 import { describe, it, expect } from 'vitest';
-import About from '@/app/about/page';
-import type { JSX } from 'react';
+import About from '@/app/[locale]/about/page';
+import { NextIntlClientProvider } from 'next-intl';
+import { JSX } from 'react';
 
 const renderWithRouter = (component: JSX.Element) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>);
+  return render(<NextIntlClientProvider>{component}</NextIntlClientProvider>);
 };
 
 describe('About', () => {

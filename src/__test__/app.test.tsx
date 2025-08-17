@@ -1,13 +1,13 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { pokemonApi } from '@/api/api';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
-import cardReducer from '@/store/CardSlice.ts';
+import cardReducer from '@/store/CardSlice';
 import searchReducer from '@/store/SearchSlice';
-import { App } from '@/app/[locale]/page';
+import App from '@/app/[locale]/page';
+import { NextIntlClientProvider } from 'next-intl';
 
 const mockUseGetPokemonQuery = vi.fn();
 
@@ -48,17 +48,14 @@ const renderComponent = () => {
   const store = createMockStore();
   return render(
     <Provider store={store}>
-      <BrowserRouter>
+      <NextIntlClientProvider>
         <App />
-      </BrowserRouter>
+      </NextIntlClientProvider>
     </Provider>
   );
 };
 
 describe('App Component Integration Tests', async () => {
-  const mockedUseNavigate = vi.mocked((await import('react-router')).useNavigate);
-  const mockedUseLocation = vi.mocked((await import('react-router')).useLocation);
-
   beforeEach(() => {
     vi.clearAllMocks();
     mockedUseNavigate.mockReturnValue(vi.fn());

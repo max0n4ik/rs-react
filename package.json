@@ -10,14 +10,20 @@
     "preview": "vite preview",
     "format:fix": "prettier --write .",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "coverage": "vitest run --coverage",
+    "test": "vitest"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.12",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",
@@ -31,8 +37,12 @@
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "prettier": "3.6.2",
+    "react-hook-form": "^7.62.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
-    "vite": "^7.1.2"
+    "vite": "^7.1.2",
+    "vitest": "^3.2.4",
+    "zod": "^4.0.17",
+    "zustand": "^5.0.8"
   }
 }

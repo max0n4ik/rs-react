@@ -1,8 +1,8 @@
 import ControlledForm from './components/ControlledForm';
-import Modal from './components/Modal';
+import Modal from './shared/Modal';
 import UncontrolledForm from './components/UncontrolledForm';
-import useStoreForms from './store/store';
-import Button from './components/Button';
+import useStoreForms from './store/ModalStore';
+import Button from './shared/Button';
 
 function App() {
   const isOpenControlled = useStoreForms((state) => state.Controlled);

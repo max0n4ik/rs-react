@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom';
 
 import { useEffect, type JSX } from 'react';
-import useStoreForms from '../store/store';
+import useStoreForms from '../store/ModalStore';
 
 export default function Modal({ children }: { children: JSX.Element }) {
   const closeC = useStoreForms((state) => state.setControlled);

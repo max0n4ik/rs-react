@@ -22,8 +22,21 @@ export const userSchema = z
       .min(0, 'Age cannot be zero'),
 
     email: z.email('Invalid email address'),
-    gender: z.literal(['male', 'female', 'other'], { error: 'Enter your gender' }),
+    gender: z.enum(['male', 'female', 'other'], {
+      error: 'Enter your gender',
+    }),
+
     acceptedTC: z.literal(true, { error: 'Please accept T&C to continue' }),
+
+    country: z.object({
+      code: z.string().length(2, 'Country code must be 2 characters'),
+      name: z.string().min(1, 'Country name is required'),
+    }),
+    image: z.object({
+      base64: z.string(),
+      mime: z.enum(['image/png', 'image/jpeg']),
+      size: z.number().int().nonnegative(),
+    }),
     password: passwordSchema,
 
     passwordConfirm: z.string().min(1, 'Password confirmation is required'),

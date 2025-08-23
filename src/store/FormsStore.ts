@@ -32,7 +32,6 @@ interface FormsState {
   history: Submission[];
   recentHighlight: { id: string; until: number } | null;
 
-  // Actions
   submitted: (payload: Submission) => void;
   clearHighlight: () => void;
   resetFormData: (origin: FormOrigin) => void;

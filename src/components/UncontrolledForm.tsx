@@ -94,7 +94,7 @@ export default function UncontrolledForm() {
   };
 
   return (
-    <div>
+    <div className="">
       <form onSubmit={handleSubmit} className="max-w-md mx-auto rounded-2xl p-8 space-y-6 transition-all" noValidate>
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-gray-800">Uncontrolled Form</h2>
@@ -145,7 +145,7 @@ export default function UncontrolledForm() {
             <Input label="Female" type="radio" name="gender" value="female" className="size-4" />
             <Input label="Other" type="radio" name="gender" value="other" className="size-4" defaultChecked />
           </div>
-          {errors.gender && <span className="text-red-500 text-sm">{errors.gender}</span>}
+          {errors.gender && <span className="text-red-500 text-sm font-medium flex items-center">{errors.gender}</span>}
         </div>
 
         <div className="space-y-2">
@@ -155,13 +155,14 @@ export default function UncontrolledForm() {
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">Profile Image (PNG or JPEG)</label>
           <input
+            required
             type="file"
             name="image"
             accept="image/png, image/jpeg"
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
-          {errors.image && <span className="text-red-500 text-sm">{errors.image}</span>}
+          {errors.image && <span className="text-red-500 text-sm font-medium flex items-center">{errors.image}</span>}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -170,7 +171,9 @@ export default function UncontrolledForm() {
             I accept the Terms and Conditions
           </label>
         </div>
-        {errors.acceptedTC && <span className="text-red-500 text-sm">{errors.acceptedTC}</span>}
+        {errors.acceptedTC && (
+          <span className="text-red-500 text-sm font-medium flex items-center">{errors.acceptedTC}</span>
+        )}
 
         <button
           type="submit"

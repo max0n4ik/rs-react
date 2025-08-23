@@ -41,9 +41,13 @@ export default function UncontrolledForm() {
       ...formValues,
       age: Number(formValues.age) || 0,
       acceptedTC: formValues.acceptedTC === 'on',
-      image: imageFile,
+      image: {
+        base64: base64Image ?? '',
+        mime: imageFile?.type.startsWith('image/png') ? 'image/png' : 'image/jpeg',
+        size: imageFile?.size,
+      },
+      country: selectedCountry,
     };
-
     try {
       const parsedData = userSchema.parse(dataToValidate);
 
@@ -80,7 +84,6 @@ export default function UncontrolledForm() {
       closeModal();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.log(error);
         const formattedErrors: Record<string, string> = {};
         error.issues.forEach((issue) => {
           const path = issue.path[0];

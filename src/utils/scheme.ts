@@ -33,7 +33,7 @@ export const userSchema = z
       name: z.string().min(1, 'Country name is required'),
     }),
     image: z.object({
-      base64: z.string(),
+      base64: z.string().regex(/^[^,]*,/),
       mime: z.enum(['image/png', 'image/jpeg']),
       size: z.number().int().nonnegative(),
     }),

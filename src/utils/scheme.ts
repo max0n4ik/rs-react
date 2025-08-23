@@ -12,22 +12,23 @@ export const userSchema = z
   .object({
     name: z
       .string()
-      .min(1, 'Name is required')
+      .min(2, 'Name is required')
       .regex(/^[A-Z]/, 'First letter must be uppercase'),
 
     age: z
       .number()
       .int('Age must be a whole number')
       .nonnegative('Age cannot be negative')
-      .min(0, 'Age cannot be negative'),
+      .min(0, 'Age cannot be zero'),
 
-    email: z.string().email('Invalid email address'),
-
+    email: z.email('Invalid email address'),
+    gender: z.literal(['male', 'female', 'other'], { error: 'Enter your gender' }),
+    acceptedTC: z.literal(true, { error: 'Please accept T&C to continue' }),
     password: passwordSchema,
 
-    confirmPassword: z.string().min(1, 'Password confirmation is required'),
+    passwordConfirm: z.string().min(1, 'Password confirmation is required'),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.passwordConfirm, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });

@@ -1,25 +1,41 @@
+import { clsx } from 'clsx';
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type: string;
   name: string;
-  value: string;
-  placeholder: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  placeholder?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
+  label?: string;
+  ref?: React.Ref<HTMLInputElement>;
 }
 
-function Input({ type, name, value, placeholder, onChange, error, ...props }: InputProps) {
+function Input({ ref, type, name, className, label, value, placeholder, onChange, error, ...props }: InputProps) {
   return (
     <>
-      <input
-        id={name}
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        {...props}
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 outline-none placeholder-gray-400"
-      />
+      <div className={clsx(label && 'flex items-center gap-2')}>
+        {label && (
+          <label className="cursor-pointer" htmlFor={value}>
+            {label}
+          </label>
+        )}
+        <input
+          id={label ? value : name}
+          type={type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          ref={ref}
+          {...props}
+          className={clsx(
+            className,
+            label && 'cursor-pointer',
+            'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 outline-none placeholder-gray-400'
+          )}
+        />
+      </div>
       {error && (
         <span className="text-red-500 text-sm font-medium flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">

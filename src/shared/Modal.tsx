@@ -4,19 +4,16 @@ import { useEffect, type JSX } from 'react';
 import useStoreForms from '../store/ModalStore';
 
 export default function Modal({ children }: { children: JSX.Element }) {
-  const closeC = useStoreForms((state) => state.setControlled);
-  const closeU = useStoreForms((state) => state.setUncontrolled);
+  const closeModal = useStoreForms((state) => state.closeModal);
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     const isModal = e.currentTarget === e.target;
     if (!isModal) return;
-    closeC(false);
-    closeU(false);
+    closeModal();
   };
 
   const handleEscKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
-      closeC(false);
-      closeU(false);
+      closeModal();
     }
   };
 

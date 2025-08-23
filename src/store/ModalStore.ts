@@ -1,17 +1,18 @@
 import { create } from 'zustand';
 
-type Forms = {
-  Uncontrolled: boolean;
-  Controlled: boolean;
-  setControlled: (value: boolean) => void;
-  setUncontrolled: (value: boolean) => void;
+export type Forms = {
+  isOpen: boolean;
+  modalKind: 'uncontrolled' | 'controlled' | null;
+  openModal: (kind: 'uncontrolled' | 'controlled') => void;
+  closeModal: () => void;
 };
 
-const useStoreForms = create<Forms>()((set) => ({
-  Uncontrolled: false,
-  Controlled: false,
-  setUncontrolled: (value) => set({ Uncontrolled: value }),
-  setControlled: (value) => set({ Controlled: value }),
+const useModalStore = create<Forms>()((set) => ({
+  isOpen: false,
+  modalKind: null,
+  openModal: (kind) => set({ isOpen: true, modalKind: kind }),
+
+  closeModal: () => set({ isOpen: false, modalKind: null }),
 }));
 
-export default useStoreForms;
+export default useModalStore;

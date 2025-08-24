@@ -1,4 +1,4 @@
-import { useId, useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { userSchema } from '../utils/scheme';
 import Input from '../shared/Input';
 import { useForm, type FieldValues } from 'react-hook-form';
@@ -14,7 +14,7 @@ export default function ControlledForm() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
-  const id = useId();
+
   const {
     register,
     handleSubmit,
@@ -40,7 +40,7 @@ export default function ControlledForm() {
   const onSubmit = (data: FieldValues) => {
     try {
       const submissionData: Submission = {
-        id,
+        id: crypto.randomUUID(),
         origin: 'controlled',
         createdAt: new Date().toISOString(),
         name: data.name,

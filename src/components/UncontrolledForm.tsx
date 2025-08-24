@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { userSchema } from '../utils/scheme';
 import z from 'zod';
 import Input from '../shared/Input';
@@ -14,9 +14,6 @@ export default function UncontrolledForm() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-  const id = useId();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -51,7 +48,7 @@ export default function UncontrolledForm() {
       const parsedData = userSchema.parse(dataToValidate);
 
       const submissionData: Submission = {
-        id,
+        id: crypto.randomUUID(),
         origin: 'uncontrolled',
         createdAt: new Date().toISOString(),
         name: parsedData.name,
@@ -124,7 +121,6 @@ export default function UncontrolledForm() {
           <Input
             type="password"
             name="password"
-            ref={inputRef}
             error={errors.password}
             placeholder="Enter your password"
             autoComplete="new-password"

@@ -54,6 +54,7 @@ export const compareSubmissions = (prev: Submission | undefined, current: Submis
   (Object.keys(prev) as (keyof Submission)[]).forEach((key) => {
     changes[key as string] = prev[key] !== current[key];
   });
+  changes.image = prev.image.size !== current.image.size;
   return changes;
 };
 
@@ -113,13 +114,6 @@ export const useFormsStore = create<FormsState>()(
       name: 'forms-storage',
       partialize: (state) => ({
         ...state,
-        history: state.history.map(({ image: _, ...item }) => item),
-        latestByForm: Object.fromEntries(
-          Object.entries(state.latestByForm).map(([key, value]) => [
-            key,
-            value ? { ...value, image: undefined as any } : undefined,
-          ])
-        ),
       }),
     }
   )

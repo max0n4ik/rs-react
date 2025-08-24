@@ -3,6 +3,7 @@ import Modal from './shared/Modal';
 import UncontrolledForm from './components/UncontrolledForm';
 import useStoreForms from './store/ModalStore';
 import Button from './shared/Button';
+import CardList from './components/CardList';
 
 function App() {
   let { openModal, modalKind } = useStoreForms((state) => state);
@@ -11,7 +12,8 @@ function App() {
 
   return (
     <>
-      <div className="h-screen flex justify-center items-center bg-[#e8f4fa]">
+      <div className="h-screen flex flex-col justify-center items-center bg-[#e8f4fa]">
+        <CardList />
         <div className="shadow-xl/30 shadow-blue-700/50 p-4  text-center w-fit">
           <h1 className="mb-5 text-2xl font-bold">Forms</h1>
           <div className=" flex mx-auto items-center  inset-0 gap-2">

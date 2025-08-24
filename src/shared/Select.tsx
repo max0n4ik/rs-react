@@ -1,6 +1,13 @@
 import { useCountriesStore, type Country } from '../store/CountryStore';
 
-export default function Select({ onSelect, error }: { onSelect: (country: Country | null) => void; error: string }) {
+export default function Select({
+  onSelect,
+  error,
+  ...props
+}: {
+  onSelect: (country: Country | null) => void;
+  error?: string;
+}) {
   const countries = useCountriesStore((state) => state.all);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -14,6 +21,7 @@ export default function Select({ onSelect, error }: { onSelect: (country: Countr
   return (
     <>
       <select
+        {...props}
         onChange={handleChange}
         className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
         <option value="" disabled selected>

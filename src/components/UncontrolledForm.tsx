@@ -1,4 +1,4 @@
-import { useId, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { userSchema } from '../utils/scheme';
 import z from 'zod';
 import Input from '../shared/Input';
@@ -9,11 +9,13 @@ import useModalStore from '../store/ModalStore';
 
 export default function UncontrolledForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { submitted } = useFormsStore((state) => state);
+  const submitted = useFormsStore((state) => state.submitted);
   const closeModal = useModalStore((state) => state.closeModal);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
+
+  const inputRef = useRef<HTMLInputElement>(null);
   const id = useId();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -39,15 +41,12 @@ export default function UncontrolledForm() {
 
     const dataToValidate = {
       ...formValues,
-      age: Number(formValues.age) || 0,
+      age: !formValues.age ? 0 : isNaN(Number(formValues.age)) ? 0 : Number(formValues.age),
       acceptedTC: formValues.acceptedTC === 'on',
-      image: {
-        base64: base64Image ?? '',
-        mime: imageFile?.type.startsWith('image/png') ? 'image/png' : 'image/jpeg',
-        size: imageFile?.size,
-      },
-      country: selectedCountry,
+      image: imageFile,
+      country: selectedCountry?.name,
     };
+
     try {
       const parsedData = userSchema.parse(dataToValidate);
 
@@ -76,7 +75,6 @@ export default function UncontrolledForm() {
       };
 
       submitted(submissionData);
-      console.log('Валидные данные отправлены:', submissionData);
       setErrors({});
       e.currentTarget.reset();
       setImageFile(null);
@@ -119,13 +117,14 @@ export default function UncontrolledForm() {
         </div>
 
         <div className="space-y-2">
-          <Input type="email" autoComplete="email" name="email" error={errors.email} placeholder="Enter your email" />
+          <Input type="text" autoComplete="off" name="email" error={errors.email} placeholder="Enter your emаil" />
         </div>
 
         <div className="space-y-2">
           <Input
             type="password"
             name="password"
+            ref={inputRef}
             error={errors.password}
             placeholder="Enter your password"
             autoComplete="new-password"
@@ -138,6 +137,7 @@ export default function UncontrolledForm() {
             name="passwordConfirm"
             error={errors.passwordConfirm}
             placeholder="Confirm your password"
+            autoComplete="new-password"
           />
         </div>
 

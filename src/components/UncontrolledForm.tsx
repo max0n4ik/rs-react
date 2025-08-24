@@ -57,7 +57,7 @@ export default function UncontrolledForm() {
         password: parsedData.password,
         gender: parsedData.gender as 'male' | 'female' | 'other',
         acceptedTC: parsedData.acceptedTC,
-        country: selectedCountry ?? { code: 'RU', name: 'Russia' },
+        country: selectedCountry ?? { code: String(parsedData.country || ''), name: String(parsedData.country || '') },
         image: imageFile
           ? {
               base64: base64Image ?? '',

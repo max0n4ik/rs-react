@@ -27,6 +27,7 @@ export default function Modal({ children }: { children: JSX.Element }) {
 
   const modal = (
     <div
+      role="dialog"
       onClick={(event) => handleClick(event)}
       className="fixed inset-0 bg-slate-900/60 overflow-y-auto backdrop-blur py-10">
       <div className="bg-white rounded-lg mx-auto min-h-[320px] max-w-[640px] ">{children}</div>

@@ -19,8 +19,9 @@ export default function ControlledForm() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isValid },
-  } = useForm({ mode: 'onBlur', resolver: zodResolver(userSchema) });
+  } = useForm({ defaultValues: { gender: 'other', country: '' }, mode: 'onBlur', resolver: zodResolver(userSchema) });
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -49,7 +50,7 @@ export default function ControlledForm() {
         password: data.password,
         gender: data.gender as 'male' | 'female' | 'other',
         acceptedTC: data.acceptedTC,
-        country: selectedCountry ?? { code: 'RU', name: 'Russia' },
+        country: selectedCountry ?? { code: String(data.country || ''), name: String(data.country || '') },
         image: imageFile
           ? {
               base64: base64Image ?? '',
@@ -160,7 +161,13 @@ export default function ControlledForm() {
         </div>
 
         <div className="space-y-2">
-          <Select {...register('country')} error={errors.country?.message} onSelect={setSelectedCountry} />
+          <Select
+            error={errors.country?.message}
+            onSelect={(c) => {
+              setSelectedCountry(c);
+              setValue('country', c?.code ?? '', { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+            }}
+          />
         </div>
 
         <div className="space-y-2">

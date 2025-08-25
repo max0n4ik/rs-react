@@ -1,1 +1,1 @@
-# rs-react
+# React + TypeScript + Vite

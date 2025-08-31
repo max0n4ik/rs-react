@@ -47,7 +47,7 @@ export function FilterSection({ filters, onChange }: Props) {
       <button
         onClick={() => setShowModal(true)}
         className="rounded-lg bg-green-900 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-green-950">
-        Select Colons
+        Select Columns
       </button>
       {showModal &&
         createPortal(

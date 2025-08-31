@@ -21,7 +21,7 @@ type SortState = {
   order: 'asc' | 'desc';
 };
 
-export type NewColons = {
+export type NewColumns = {
   oil_co2: boolean;
   methane: boolean;
 };
@@ -30,5 +30,5 @@ export type Filters = {
   country: string;
   year: number | null;
   sort: SortState;
-  newColons: NewColons;
+  newColumns: NewColumns;
 };

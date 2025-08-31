@@ -1,6 +1,7 @@
 import clsx from 'clsx';
+import { memo } from 'react';
 
-export function Cell({ children, highlighted }: { children: React.ReactNode; highlighted: boolean }) {
+function Cell({ children, highlighted }: { children: React.ReactNode; highlighted: boolean }) {
   return (
     <div
       className={clsx(
@@ -11,3 +12,5 @@ export function Cell({ children, highlighted }: { children: React.ReactNode; hig
     </div>
   );
 }
+
+export default memo(Cell);

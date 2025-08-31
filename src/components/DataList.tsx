@@ -1,15 +1,25 @@
-import type { CountryData, Data, NewColons } from '../types/data-type';
+import { memo, useCallback, useMemo } from 'react';
+import type { CountryData, Data, NewColumns } from '../types/data-type';
 import CountryItem from './CountryItem';
 import clsx from 'clsx';
 
 type Props = {
   data: Data;
-  newColons: NewColons;
+  newColumns: NewColumns;
   onSort: (column: keyof CountryData) => void;
 };
 
-function DataList({ data, newColons, onSort }: Props) {
-  const columnCount = 6 + Object.values(newColons).filter(Boolean).length;
+function DataList({ data, newColumns, onSort }: Props) {
+  const columnCount = useMemo(() => 6 + Object.values(newColumns).filter(Boolean).length, [newColumns]);
+  const gridColsClass = columnCount === 6 ? 'grid-cols-6' : columnCount === 7 ? 'grid-cols-7' : 'grid-cols-8';
+
+  const handleSortPopulation = useCallback(() => onSort('population'), [onSort]);
+  const handleSortCo2 = useCallback(() => onSort('co2'), [onSort]);
+  const handleSortCo2PerCapita = useCallback(() => onSort('co2_per_capita'), [onSort]);
+  const handleSortOil = useCallback(() => onSort('oil_co2'), [onSort]);
+  const handleSortMethane = useCallback(() => onSort('methane'), [onSort]);
+
+  const items = useMemo(() => Object.entries(data) as [string, { iso_code: string; data: CountryData[] }][], [data]);
   return (
     <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-lg text-[#efeae4] shadow-lg">
       <div className="px-6 py-4">
@@ -20,7 +30,7 @@ function DataList({ data, newColons, onSort }: Props) {
         <div
           className={clsx(
             'grid border-b border-[#3c493b] px-6 py-4 font-bold text-[#efeae4] transition-colors duration-200 hover:bg-[#2b3a2c]',
-            `grid-cols-${columnCount}`
+            gridColsClass
           )}>
           <div className="col-span-1 flex self-start">
             <span className="rounded">ISO</span>
@@ -34,35 +44,35 @@ function DataList({ data, newColons, onSort }: Props) {
             <span>Year</span>
           </div>
 
-          <div onClick={() => onSort('population')} className="col-span-1 flex cursor-pointer place-content-center">
+          <div onClick={handleSortPopulation} className="col-span-1 flex cursor-pointer place-content-center">
             <span>Population</span>
           </div>
 
-          <div onClick={() => onSort('co2')} className="col-span-1 flex cursor-pointer place-content-center">
+          <div onClick={handleSortCo2} className="col-span-1 flex cursor-pointer place-content-center">
             <span className="text-[#efeae4]">CO2</span>
           </div>
 
-          <div onClick={() => onSort('co2_per_capita')} className="col-span-1 flex cursor-pointer place-content-center">
+          <div onClick={handleSortCo2PerCapita} className="col-span-1 flex cursor-pointer place-content-center">
             <span className="text-[#efeae4]">Per capita CO2</span>
           </div>
-          {newColons.oil_co2 && (
-            <div onClick={() => onSort('oil_co2')} className="col-span-1 flex cursor-pointer place-content-center">
+          {newColumns.oil_co2 && (
+            <div onClick={handleSortOil} className="col-span-1 flex cursor-pointer place-content-center">
               <span className="text-[#efeae4]">Oil</span>
             </div>
           )}
 
-          {newColons.methane && (
-            <div onClick={() => onSort('methane')} className="col-span-1 flex cursor-pointer place-content-center">
+          {newColumns.methane && (
+            <div onClick={handleSortMethane} className="col-span-1 flex cursor-pointer place-content-center">
               <span className="text-[#efeae4]">Methane</span>
             </div>
           )}
         </div>
-        {Object.entries(data).map(([code]) => (
-          <CountryItem key={data[code].iso_code} data={data[code]} country={code} newColons={newColons} />
+        {items.map(([code]) => (
+          <CountryItem key={data[code].iso_code} data={data[code]} country={code} newColumns={newColumns} />
         ))}
       </div>
     </div>
   );
 }
 
-export default DataList;
+export default memo(DataList);
